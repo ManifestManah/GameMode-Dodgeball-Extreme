@@ -2,6 +2,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
+//#include <cstrike>
 
 // The code formatting rules we wish to follow
 #pragma semicolon 1;
@@ -26,6 +27,7 @@ public Plugin myinfo =
 // Global Integers (Material Files)
 int SpriteSheet = 0;
 
+bool GrenadeHasBounced[2049] = {false,...};
 
 
 //////////////////////////
@@ -70,6 +72,12 @@ public void GameModeSpecificSettings()
 	SetConVarInt2("mp_teamcashawards", 0);
 
 	// Removes radio messages, to avoid the "fire in the hole" chat spam
+	SetConVarInt2("sv_ignoregrenaderadio", 1);
+
+	// Changes the amount of grenades a player can carry
+	SetConVarInt2("ammo_grenade_limit_default",10);
+	SetConVarInt2("ammo_grenade_limit_flashbang",10);
+	SetConVarInt2("ammo_grenade_limit_total", 10);
 }
 
 
@@ -145,4 +153,102 @@ public void DownloadAndPrecacheFiles()
 	// Precaches the sound which we intend to use
 	PrecacheSound("sound/Manifest/dodgeball_extreme/hit.mp3", true);
 	PrecacheSound("sound/Manifest/dodgeball_extreme/whistle.mp3", true);
+}
+
+
+
+///////////////////////////////
+// - Timer Based Functions - //
+///////////////////////////////
+
+
+// This happens 0.25 seconds after a player spawns
+public Action Timer_GiveWeapons(Handle Timer, int client)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Gives the player the specified weapon
+	GivePlayerItem(client, "weapon_flashbang");
+
+	// Gives the player the specified weapon
+	GivePlayerItem(client, "weapon_decoy");
+
+	// Changes the player's amount of flashbang grenades to 5
+	SetflashbangAmount(client);
+
+	// Changes the player's amount of decoys to 5
+	SetDecoyAmount(client);
+
+	return Plugin_Continue;
+}
+
+
+// This happens 0.1 seconds after a player throws a decoy or flashbang grenade
+public Action Timer_PreventExplosion(Handle Timer, int entity)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidEntity(entity))
+	{
+		return Plugin_Continue;
+	}
+
+	// Changes the entity's explosion status
+	SetEntProp(entity, Prop_Data, "m_nNextThinkTick", -1);
+
+	return Plugin_Continue;
+}
+
+
+// This happens 0.1 seconds after a player throws a decoy grenade
+public Action Timer_RefillDecoys(Handle Timer, int client)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Changes the player's amount of decoys to 5
+	SetDecoyAmount(client);
+
+	return Plugin_Continue;
+}
+
+
+
+// This happens 0.1 seconds after a player throws a flashbang grenade
+public Action Timer_RefillFlashBangs(Handle Timer, int client)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Changes the player's amount of flashbang grenades to 5
+	SetflashbangAmount(client);
+
+	return Plugin_Continue;
+}
+
+
+
+////////////////////////////////
+// - Return Based Functions - //
+////////////////////////////////
+
+
+// Returns true if the client meets the validation criteria. elsewise returns false
+public bool IsValidClient(int client)
+{
+	if (!(1 <= client <= MaxClients) || !IsClientConnected(client) || !IsClientInGame(client) || IsClientSourceTV(client) || IsClientReplay(client))
+	{
+		return false;
+	}
+
+	return true;
 }
