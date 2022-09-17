@@ -120,6 +120,191 @@ public Action LateLoadSupport()
 }
 
 
+// This happens when a grenade is thrown
+public void AttachTrail(int client, int entity)
+{
+	// Creates an array containing the red, green, blue and alpha valuees used for coloring and save it within our TrailColor variable
+	int TrailColor[4] = {255, 0, 255, 255};
+
+	// If the client is on the terrorist team then execute this section
+	if(GetClientTeam(client) == 2)
+	{
+		// Sets the blue coloring value to 0
+		TrailColor[2] = 0;
+	}
+
+	// If the client is on the counter-terrorist team then execute this section
+	else if(GetClientTeam(client) == 3)
+	{
+		// Sets the red coloring value to 0
+		TrailColor[0] = 0;
+	}
+
+	// Creates a temporary visual effect and attach it to the grenade entity
+	TE_SetupBeamFollow(entity, SpriteSheet, SpriteSheet, 0.5, 5.0, 0.1, 1, TrailColor);
+
+	// Display the temporary visiual effect to all players
+	TE_SendToAll();
+}
+
+
+
+// This happens when a grenade is thrown
+public void SetGrenadeModel(int client, int entity)
+{
+	// If the specified model is not already precached then execute this section
+	if(!IsModelPrecached("models/DBE/props/ball.mdl"))
+	{
+		// Precache the model we intend to use
+		PrecacheModel("models/DBE/props/ball.mdl");
+	}
+
+	// Changes the grenade's model
+	SetEntityModel(entity, "models/DBE/props/ball.mdl");
+}
+
+
+
+// This happens when a grenade is thrown
+public void SetGrenadeColor(int client, int entity)
+{
+	// If the client is on the terrorist team then execute this section
+	if(GetClientTeam(client) == 2)
+	{
+		// Changes the grenade's color to red
+		SetEntityRenderColor(entity, 255, 0, 0, 255);
+	}
+
+	// If the client is on the counter-terrorist team then execute this section
+	else if(GetClientTeam(client) == 3)
+	{
+		// Changes the grenade's color to blue
+		SetEntityRenderColor(entity, 0, 0, 255, 255);
+	}
+}
+
+
+
+// This happens when a player spawns
+public void RemoveAllWeapons(int client)
+{
+	for(int loop3 = 0; loop3 < 4 ; loop3++)
+	{
+		for(int WeaponNumber = 0; WeaponNumber < 24; WeaponNumber++)
+		{
+			int WeaponSlotNumber = GetPlayerWeaponSlot(client, WeaponNumber);
+
+			if (WeaponSlotNumber != -1)
+			{
+				if (IsValidEdict(WeaponSlotNumber) && IsValidEntity(WeaponSlotNumber))
+				{
+					RemovePlayerItem(client, WeaponSlotNumber);
+
+					AcceptEntityInput(WeaponSlotNumber, "Kill");
+				}
+			}
+		}
+	}
+}
+
+
+
+// This happens when a player throws a flashbang or when a player spawns
+public void SetflashbangAmount(int client)
+{
+	// Changes the player's amount of flashbang grenades to 5
+	SetEntProp(client, Prop_Send, "m_iAmmo", 5, _, 15);
+}
+
+
+// This happens when a player throws a decoy or when a player spawns
+public void SetDecoyAmount(int client)
+{
+	// Changes the player's amount of decoy grenades to 5
+	SetEntProp(client, Prop_Send, "m_iAmmo", 5, _, 18);
+}
+
+
+
+// This happens when we want to change a server variable
+public void SetConVarInt2(const char[] ConvarName, int ConvarValue)
+{
+	// Obtains the name of the convar and store it within our ServerVariable
+	ConVar ServerVariable = FindConVar(ConvarName);
+
+	// If the ServerVariable is anything else than null then execute this section
+	if(ServerVariable != null)
+	{
+		// Sets the server variable to an integer value
+		ServerVariable.SetInt(ConvarValue);
+	}
+}
+
+
+
+// This happens when a knife king is killed
+public void PlaySoundForClient(int client, const char[] SoundName)
+{
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached(SoundName))
+	{	
+		// Precaches the sound file
+		PrecacheSound(SoundName, true);
+	}
+
+	// Creates a variable called FullSoundName which we will use to store the sound's full name path within
+	char FullSoundName[256];
+
+	// Formats a message which we intend to use as a client command
+ 	Format(FullSoundName, sizeof(FullSoundName), "play */%s", SoundName);
+
+	// Performs a clientcommand to play a sound only the clint can hear
+	ClientCommand(client, FullSoundName);
+}
+
+
+
+// This happens when a new round starts 
+public void RemoveEntityHostage()
+{
+	// Creates an integer named entity and sets it to INVALID_ENT_REFERENCE;
+	int entity = INVALID_ENT_REFERENCE;
+	
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "hostage_entity")) != INVALID_ENT_REFERENCE)
+	{
+		// If the entity meets the criteria of validation then execute this section
+		if(IsValidEntity(entity))
+		{
+			// Kills the entity, removing it from the game
+			AcceptEntityInput(entity, "Kill");
+		}
+	}
+}
+
+
+
+// This happens when a new round starts 
+public void RemoveEntityBuyzones()
+{
+	// Creates an integer named entity and sets it to INVALID_ENT_REFERENCE;
+	int entity = INVALID_ENT_REFERENCE;
+	
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "func_buyzone")) != INVALID_ENT_REFERENCE)
+	{
+		// If the entity meets the criteria of validation then execute this section
+		if(IsValidEntity(entity))
+		{
+			// Kills the entity, removing it from the game
+			AcceptEntityInput(entity, "Kill");
+		}
+	}
+}
+
+
+
+
 // This happen when the plugin is loaded and when a new map starts
 public void DownloadAndPrecacheFiles()
 {
