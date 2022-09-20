@@ -88,6 +88,152 @@ public void GameModeSpecificSettings()
 ////////////////
 
 
+// This happens when a player spawns
+public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Obtains the client's userid and converts it to an index and store it within our client variable
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Removes all the weapons from the client
+	RemoveAllWeapons(client);
+
+	// After 0.25 seconds gives the player the weapons
+	CreateTimer(0.25, Timer_GiveWeapons, client, TIMER_FLAG_NO_MAPCHANGE);
+
+	return Plugin_Continue;
+}
+
+
+
+// This happens when a player dies
+public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Obtains the client's userid and converts it to an index and store it within our client variable
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Obtains the client's userid and converts it to an index and store it within our client variable
+	int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(attacker))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the attacker is also the same person as the client then execute this section
+	if(attacker == client)
+	{
+		return Plugin_Continue;
+	}
+
+	// Plays a sound only the specified client can hear
+	PlaySoundForClient(client, "Manifest/dodgeball_extreme/hit.mp3");
+
+	return Plugin_Continue;
+}
+
+
+
+// This happens when a new round starts
+public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Removes all of the hostages from the map
+	RemoveEntityHostage();
+
+	// Removes all of the buy zones from the map
+	RemoveEntityBuyzones();
+
+	// Loops through all of the clients
+	for(int client = 1; client <= MaxClients; client++)
+	{
+		// If the client does not meet our validation criteria then execute this section
+		if(!IsValidClient(client))
+		{
+			continue;
+		}
+
+		// If the player is a bot then execute this section
+		if(IsFakeClient(client))
+		{
+			continue;
+		}
+
+		// Plays a sound only the specified client can hear
+		PlaySoundForClient(client, "Manifest/dodgeball_extreme/whistle.mp3");
+	}
+}
+
+
+
+// This happens just prior to a player being blinded
+public Action Event_PlayerBlindPre(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Obtains the client's userid and converts it to an index and store it within our client variable
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	SetEntPropFloat(client, Prop_Send, "m_flFlashMaxAlpha", 0.5);
+
+	return Plugin_Continue;
+}
+
+
+
+// This happens just after a player being blinded
+public Action Event_PlayerBlindPost(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Obtains the client's userid and converts it to an index and store it within our client variable
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// After 0.0 seconds removes the ´player's blinding effect
+	CreateTimer(0.0, Timer_RemoveBlind, client, TIMER_FLAG_NO_MAPCHANGE);
+
+	return Plugin_Continue;
+}
+
+
+
+// This happens 0.25 seconds after a player spawns
+public Action Timer_RemoveBlind(Handle Timer, int client)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the player is currently lashd for more than 0.0 seconds then execute this section
+	if(GetEntPropFloat(client, Prop_Send, "m_flFlashDuration") != 0.0)
+	{
+		SetEntPropFloat(client, Prop_Send, "m_flFlashMaxAlpha", 0.5);
+	}
+
+	return Plugin_Continue;
+}
+
 
 
 
