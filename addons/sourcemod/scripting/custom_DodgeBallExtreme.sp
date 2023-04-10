@@ -48,6 +48,9 @@ public void OnPluginStart()
 //	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
 	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
+
+	// Allows the modification to be loaded while the server is running, without causing gameplay issues
+	LateLoadSupport();
 }
 
 
@@ -193,6 +196,24 @@ public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast
 ///////////////////////////
 // - Regular Functions - //
 ///////////////////////////
+
+
+// This happens when the plugin is loaded
+public void LateLoadSupport()
+{
+	// Loops through all of the clients
+	for (int client = 1; client <= MaxClients; client++)
+	{
+		// If the client does not meet our validation criteria then execute this section
+		if(!IsValidClient(client))
+		{
+			continue;
+		}
+
+		// Adds a hook to the client which will let us track when the player is eligible to pick up a weapon
+		SDKHook(client, SDKHook_WeaponCanUse, Hook_WeaponCanUse);
+	}
+}
 
 
 // This happens when a player spawns
