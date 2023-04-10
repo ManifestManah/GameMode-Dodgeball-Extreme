@@ -44,10 +44,10 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
 	// Hooks the events that we intend to use in our plugin
-	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
-	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
+//	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
+//	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
-	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
+//	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
 }
 
 
@@ -56,6 +56,9 @@ public void OnMapStart()
 {
 	// Executes the configuration file containing the modification specific configurations
 	ServerCommand("exec sourcemod/dodgeball_extreme/dodgeball_settings.cfg");
+
+	// Removes all of the buy zones from the map
+	RemoveEntityBuyZones();
 }
 
 
@@ -70,9 +73,17 @@ public void OnMapStart()
 // This happens when a new round starts
 public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast)
 {
-	// Removes all of the buy zones from the map
-	RemoveEntityBuyZones();
+	// Removes all of the hostages from the map
+	RemoveEntityHostage();
 }
+
+
+
+
+
+///////////////////////////
+// - Regular Functions - //
+///////////////////////////
 
 
 // This happens when a new round starts 
@@ -93,19 +104,50 @@ public void RemoveEntityBuyZones()
 		// Kills the entity, removing it from the game
 		AcceptEntityInput(entity, "Kill");
 
-
 		PrintToChatAll("Debug - A Buyzone has been removed from the map :%i", entity);
 	}
 }
 
 
+// This happens when a new round starts 
+public void RemoveEntityHostage()
+{
+	// Creates a variable named entity with a value of -1
+	int entity = -1;
 
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "hostage_entity")) != -1)
+	{
+		// If the entity does not meet the criteria of validation then execute this section
+		if(!IsValidEntity(entity))
+		{
+			continue;
+		}
 
+		// Kills the entity, removing it from the game
+		AcceptEntityInput(entity, "Kill");
 
-///////////////////////////
-// - Regular Functions - //
-///////////////////////////
+		PrintToChatAll("Debug - A Hostage has been removed from the map :%i", entity);
+	}
 
+	// Changes the value of the entity variable to -1
+	entity = -1;
+
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "info_hostage_spawn")) != -1)
+	{
+		// If the entity does not meet the criteria of validation then execute this section
+		if(!IsValidEntity(entity))
+		{
+			continue;
+		}
+
+		// Kills the entity, removing it from the game
+		AcceptEntityInput(entity, "Kill");
+
+		PrintToChatAll("Debug - A Hostage Spawn has been removed from the map :%i", entity);
+	}
+}
 
 
 
