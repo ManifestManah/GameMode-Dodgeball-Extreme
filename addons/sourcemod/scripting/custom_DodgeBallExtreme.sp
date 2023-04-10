@@ -90,6 +90,9 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 
 	// Removes all the weapons from the client
 	RemoveAllWeapons(client);
+
+	// Gives the client a decoy grenade
+	GiveDecoyGrenade(client);
 }
 
 
@@ -133,6 +136,25 @@ public void RemoveAllWeapons(int client)
 			AcceptEntityInput(WeaponSlotNumber, "Kill");
 		}
 	}
+}
+
+
+// This happens when a player spawns
+public void GiveDecoyGrenade(int client)
+{
+	// Gives the client the specified weapon
+	GivePlayerItem(client, "weapon_decoy");
+
+	PrintToChat(client, "Debug - Carrying %i Decoys", GetEntProp(client, Prop_Send, "m_iAmmo", _, 18));
+
+	// If the client has 1 decoy then execute this section
+	if(GetEntProp(client, Prop_Send, "m_iAmmo", _, 18) == 1)
+	{
+		return;
+	}
+
+	// Changes the client's amount of decoy grenades to 1
+	SetEntProp(client, Prop_Send, "m_iAmmo", 1, _, 18);
 }
 
 
