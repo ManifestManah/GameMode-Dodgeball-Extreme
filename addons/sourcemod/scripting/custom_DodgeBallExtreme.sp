@@ -44,7 +44,7 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
 	// Hooks the events that we intend to use in our plugin
-//	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
+	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 //	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
 //	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
@@ -76,6 +76,23 @@ public void OnMapStart()
 ////////////////
 
 
+// This happens when a player spawns
+public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Obtains the client's userid and converts it to an index and store it within our client variable
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return;
+	}
+
+	// Removes all the weapons from the client
+	RemoveAllWeapons(client);
+}
+
+
 // This happens when a new round starts
 public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast)
 {
@@ -90,6 +107,33 @@ public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast
 ///////////////////////////
 // - Regular Functions - //
 ///////////////////////////
+
+
+// This happens when a player spawns
+public void RemoveAllWeapons(int client)
+{
+	for(int loop3 = 0; loop3 < 4 ; loop3++)
+	{
+		for(int WeaponNumber = 0; WeaponNumber < 24; WeaponNumber++)
+		{
+			int WeaponSlotNumber = GetPlayerWeaponSlot(client, WeaponNumber);
+
+			if(WeaponSlotNumber == -1)
+			{
+				continue;
+			}
+
+			if(!IsValidEdict(WeaponSlotNumber) || !IsValidEntity(WeaponSlotNumber))
+			{
+				continue;
+			}
+
+			RemovePlayerItem(client, WeaponSlotNumber);
+
+			AcceptEntityInput(WeaponSlotNumber, "Kill");
+		}
+	}
+}
 
 
 // This happens when a new round starts 
@@ -213,4 +257,17 @@ public void RemoveEntityHostage()
 ////////////////////////////////
 // - Return Based Functions - //
 ////////////////////////////////
+
+
+// Returns true if the client meets the validation criteria. elsewise returns false
+public bool IsValidClient(int client)
+{
+	if (!(1 <= client <= MaxClients) || !IsClientConnected(client) || !IsClientInGame(client) || IsClientSourceTV(client) || IsClientReplay(client))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
