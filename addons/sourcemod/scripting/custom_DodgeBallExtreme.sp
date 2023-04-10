@@ -47,7 +47,7 @@ public void OnPluginStart()
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 //	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
-//	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
+	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
 }
 
 
@@ -96,14 +96,35 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 }
 
 
+// This happens when a player fires their weapon
+public void Event_WeaponFire(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Obtains the client's userid and converts it to an index and store it within our client variable
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return;
+	}
+
+	PrintToChat(client, "Debug - Weapon Fired!");
+
+	/* NOTE: Using any lower time gap will cause the player to be unable to
+			 fully receive the decoy grenade, and render them unable to see
+			 the view model, as well as throw the grenade. */
+
+	// Gives the client a decoy grenade after 0.8 seconds
+	CreateTimer(0.8, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+
 // This happens when a new round starts
 public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast)
 {
 	// Removes all of the hostages from the map
 	RemoveEntityHostage();
 }
-
-
 
 
 
@@ -273,6 +294,21 @@ public void RemoveEntityHostage()
 // - Timer Based Functions - //
 ///////////////////////////////
 
+
+// This happens shortly after a player fires their weapon
+public Action Timer_GiveDecoyGrenade(Handle Timer, int client)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Gives the client a decoy grenade
+	GiveDecoyGrenade(client);
+
+	return Plugin_Continue;
+}
 
 
 
