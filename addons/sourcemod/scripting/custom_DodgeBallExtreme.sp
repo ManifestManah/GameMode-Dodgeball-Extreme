@@ -67,6 +67,38 @@ public void OnMapStart()
 ////////////////
 
 
+// This happens when a new round starts
+public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Removes all of the buy zones from the map
+	RemoveEntityBuyZones();
+}
+
+
+// This happens when a new round starts 
+public void RemoveEntityBuyZones()
+{
+	// Creates a variable named entity with a value of -1
+	int entity = -1;
+	
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "func_buyzone")) != -1)
+	{
+		// If the entity does not meet the criteria of validation then execute this section
+		if(!IsValidEntity(entity))
+		{
+			continue;
+		}
+
+		// Kills the entity, removing it from the game
+		AcceptEntityInput(entity, "Kill");
+
+
+		PrintToChatAll("Debug - A Buyzone has been removed from the map :%i", entity);
+	}
+}
+
+
 
 
 
