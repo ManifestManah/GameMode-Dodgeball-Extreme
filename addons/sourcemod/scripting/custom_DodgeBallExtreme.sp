@@ -51,6 +51,14 @@ public void OnPluginStart()
 }
 
 
+// This happens when a new map is loaded
+public void OnMapStart()
+{
+	// Executes the configuration file containing the modification specific configurations
+	ServerCommand("exec sourcemod/dodgeball_extreme/dodgeball_settings.cfg");
+}
+
+
 
 
 
