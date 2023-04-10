@@ -60,6 +60,9 @@ public void OnMapStart()
 	// Removes all of the buy zones from the map
 	RemoveEntityBuyZones();
 
+	// Removes all of the bomb sites from the map
+	RemoveEntityBombSites();
+
 	// Removes Hostage Rescue Points from the map
 	RemoveEntityHostageRescuePoint();
 }
@@ -108,6 +111,29 @@ public void RemoveEntityBuyZones()
 		AcceptEntityInput(entity, "Kill");
 
 		PrintToChatAll("Debug - A Buyzone has been removed from the map :%i", entity);
+	}
+}
+
+
+// This happens when a new round starts 
+public void RemoveEntityBombSites()
+{
+	// Creates a variable named entity with a value of -1
+	int entity = -1;
+	
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "func_bomb_target")) != -1)
+	{
+		// If the entity does not meet the criteria of validation then execute this section
+		if(!IsValidEntity(entity))
+		{
+			continue;
+		}
+
+		// Kills the entity, removing it from the game
+		AcceptEntityInput(entity, "Kill");
+
+		PrintToChatAll("Debug - A Bomb Target has been removed from the map :%i", entity);
 	}
 }
 
