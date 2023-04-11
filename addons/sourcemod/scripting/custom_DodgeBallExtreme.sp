@@ -181,6 +181,16 @@ public Action Hook_DecoySpawnPost(int entity)
 	// Sets the decoy entity's bounce status to false
 	decoyHasBounced[entity] = false;
 
+	// If the model is not precached already then execute this section
+	if(!IsModelPrecached("models/props/de_dust/hr_dust/dust_soccerball/dust_soccer_ball001.mdl"))
+	{
+		// Precaches the specified model
+		PrecacheModel("models/props/de_dust/hr_dust/dust_soccerball/dust_soccer_ball001.mdl");
+	}
+
+	// Changes the entity's model to the specified one
+	SetEntityModel(entity, "models/props/de_dust/hr_dust/dust_soccerball/dust_soccer_ball001.mdl");
+
 	// Adds a hook to our grenade entity to notify of us when the grenade will touch something
 	SDKHook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
 
