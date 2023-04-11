@@ -52,6 +52,9 @@ public void OnPluginStart()
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
 	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
 
+	// Removes any unowned weapon and item entities from the map every 2.0 seconds
+	CreateTimer(2.0, Timer_CleanFloor, _, TIMER_REPEAT);
+
 	// Allows the modification to be loaded while the server is running, without causing gameplay issues
 	LateLoadSupport();
 }
@@ -138,7 +141,6 @@ public Action Hook_WeaponCanUse(int client, int weapon)
 }
 
 
-
 // This happens when a new entity is created
 public void OnEntityCreated(int entity, const char[] className)
 {
@@ -153,7 +155,6 @@ public void OnEntityCreated(int entity, const char[] className)
 }
 
 
-
 // This happens when a decoy grenade projectile has been spawned
 public Action Hook_DecoySpawnPost(int entity)
 {
@@ -165,7 +166,7 @@ public Action Hook_DecoySpawnPost(int entity)
 
 	// Disables the decoy's sound emitting and explosion functionality
 	CreateTimer(0.1, Timer_DisableDecoyFunctionality, entity, TIMER_FLAG_NO_MAPCHANGE);
-
+	
 	// Removes the decoy grenade from the game after 10 seconds has passed
 	CreateTimer(10.0, Timer_RemoveDecoyGrenade, entity, TIMER_FLAG_NO_MAPCHANGE);
 
@@ -210,7 +211,6 @@ public Action Hook_DecoySpawnPost(int entity)
 
 	return Plugin_Continue;
 }
-
 
 
 // This happens when a high explosive grenade touches something while a king possesses the sticky grenade power
@@ -265,6 +265,27 @@ public Action Hook_DecoyTouchPost(int entity, int client)
 
 	return Plugin_Continue;
 }
+
+
+
+/* Code Snippet - Will be used later
+// If the decoy entity's bounce status is set to false then execute this section
+if(!decoyHasBounced[entity])
+{
+
+	// If the model is not precached already then execute this section
+	if(!IsModelPrecached("models/props/de_stadium/exercise_ball.mdl"))
+	{
+		// Precaches the specified model
+		PrecacheModel("models/props/de_stadium/exercise_ball.mdl");
+	}
+
+	// Changes the client's player model to the specified model
+	SetEntityModel(client, "models/props/de_stadium/exercise_ball.mdl");
+
+
+}
+*/
 
 
 ////////////////
@@ -507,6 +528,44 @@ public void RemoveEntityHostage()
 ///////////////////////////////
 // - Timer Based Functions - //
 ///////////////////////////////
+
+
+// This happens every 2.0 seconds and is used to remove items and weapons lying around in the map
+public Action Timer_CleanFloor(Handle timer)
+{
+	// Loops through all entities that are currently in the game
+	for (int entity = MaxClients + 1; entity <= GetMaxEntities(); entity++)
+	{
+		// If the entity does not meet our criteria of validation then execute this section
+		if(!IsValidEntity(entity))
+		{
+			continue;
+		}
+
+		// Creates a variable which we will use to store data within
+		char className[64];
+
+		// Obtains the entity's class name and store it within our className variable
+		GetEntityClassname(entity, className, sizeof(className));
+
+		// If the className contains neither weapon_ nor item_ then execute this section
+		if((StrContains(className, "weapon_") == -1 && StrContains(className, "item_") == -1))
+		{
+			continue;
+		}
+
+		// If the entity has an ownership relation then execute this section
+		if(GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity") != -1)
+		{
+			continue;
+		}
+
+		// Removes the entity from the map 
+		AcceptEntityInput(entity, "Kill");
+	}
+
+	return Plugin_Continue;
+}
 
 
 // This happens shortly after a player fires their weapon
