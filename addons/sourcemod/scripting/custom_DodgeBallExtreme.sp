@@ -191,6 +191,20 @@ public Action Hook_DecoySpawnPost(int entity)
 	// Changes the entity's model to the specified one
 	SetEntityModel(entity, "models/props/de_dust/hr_dust/dust_soccerball/dust_soccer_ball001.mdl");
 
+	// If the client is on the terrorist team then execute this section
+	if(GetClientTeam(client) == 2)
+	{
+		// Changes the color of the entity to the specified RGB color
+		DispatchKeyValue(entity, "rendercolor", "160 0 0");
+	}
+
+	// If the client is on the counter-terrorist team then execute this section
+	else if(GetClientTeam(client) == 3)
+	{
+		// Changes the color of the entity to the specified RGB color
+		DispatchKeyValue(entity, "rendercolor", "0 0 180");
+	}
+
 	// Adds a hook to our grenade entity to notify of us when the grenade will touch something
 	SDKHook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
 
