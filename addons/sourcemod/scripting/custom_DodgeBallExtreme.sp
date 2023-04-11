@@ -166,6 +166,9 @@ public Action Hook_DecoySpawnPost(int entity)
 	// Disables the decoy's sound emitting and explosion functionality
 	CreateTimer(0.1, Timer_DisableDecoyFunctionality, entity, TIMER_FLAG_NO_MAPCHANGE);
 
+	// Removes the decoy grenade from the game after 10 seconds has passed
+	CreateTimer(10.0, Timer_RemoveDecoyGrenade, entity, TIMER_FLAG_NO_MAPCHANGE);
+
 	// Obtains and stores the entity owner offset within our client variable 
 	int client = GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
 
@@ -509,6 +512,22 @@ public Action Timer_DisableDecoyFunctionality(Handle Timer, int entity)
 
 	// Changes the entity's explosion status
 	SetEntProp(entity, Prop_Data, "m_nNextThinkTick", -1);
+
+	return Plugin_Continue;
+}
+
+
+// This happens 10.0 seconds after a decoy_projectile is spawned
+public Action Timer_RemoveDecoyGrenade(Handle Timer, int entity)
+{
+	// If the entity does not meet our criteria validation then execute this section
+	if(!IsValidEntity(entity))
+	{
+		return Plugin_Continue;
+	}
+
+	// Kills the entity, removing it from the game
+	AcceptEntityInput(entity, "Kill");
 
 	return Plugin_Continue;
 }
