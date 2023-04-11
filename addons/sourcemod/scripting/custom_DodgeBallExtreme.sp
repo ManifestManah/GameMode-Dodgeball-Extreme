@@ -204,6 +204,35 @@ public Action Hook_DecoyTouchPost(int entity, int client)
 		SDKUnhook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
 	}
 
+	// If the client meets our validation criteria then execute this section
+	else
+	{
+		PrintToChatAll("Debug - Grenade bounced on a player");
+
+		// Obtains and stores the entity owner offset within our decoyOwner variable 
+		int decoyOwner = GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
+
+		// If the client meets our validation criteria then execute this section
+		if(!IsValidClient(decoyOwner))
+		{
+			return Plugin_Continue;
+		}
+
+		// If the client hit by the decoy is on the opposite team of the owner of the grenade then execute this section
+		if(GetClientTeam(client) != GetClientTeam(decoyOwner))
+		{
+			return Plugin_Continue;
+		}
+
+		// Sets the decoy entity's bounce status to true
+		decoyHasBounced[entity] = true;
+
+		// Removes the hook that we had attached to the grenade
+		SDKUnhook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
+
+		PrintToChatAll("Debug - Grenade bounced on a friendly player");
+	}
+
 	return Plugin_Continue;
 }
 
