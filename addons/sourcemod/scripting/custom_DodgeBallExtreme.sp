@@ -32,6 +32,9 @@ public Plugin myinfo =
 // - Global Variables - //
 //////////////////////////
 
+// Global Booleans
+bool decoyHasBounced[2049] = {false,...};
+
 
 
 
@@ -136,6 +139,75 @@ public Action Hook_WeaponCanUse(int client, int weapon)
 
 
 
+// This happens when a new entity is created
+public void OnEntityCreated(int entity, const char[] className)
+{
+	// If the created entity is not a decoy_projectile then execute this section
+	if(!StrEqual(className, "decoy_projectile", false))
+	{
+		return;
+	}
+
+	// Adds a hook to the decoy grenade after it has been spawned allowing us to alter the grenade's behavior
+	SDKHook(entity, SDKHook_SpawnPost, Hook_DecoySpawnPost);
+}
+
+
+
+// This happens when a decoy grenade projectile has been spawned
+public Action Hook_DecoySpawnPost(int entity)
+{
+	// If the entity does not meet our criteria validation then execute this section
+	if(!IsValidEntity(entity))
+	{
+		return Plugin_Continue;
+	}
+
+	// Obtains and stores the entity owner offset within our client variable 
+	int client = GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Sets the decoy entity's bounce status to false
+	decoyHasBounced[entity] = false;
+
+	// Adds a hook to our grenade entity to notify of us when the grenade will touch something
+	SDKHook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
+
+	return Plugin_Continue;
+}
+
+
+
+// This happens when a high explosive grenade touches something while a king possesses the sticky grenade power
+public Action Hook_DecoyTouchPost(int entity, int client)
+{
+	// If the entity does not meet our criteria validation then execute this section
+	if(!IsValidEntity(entity))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		// Sets the decoy entity's bounce status to true
+		decoyHasBounced[entity] = true;
+
+		PrintToChatAll("Debug - Grenade bounced on something that was not a player");
+
+		// Removes the hook that we had attached to the grenade
+		SDKUnhook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
+	}
+
+	return Plugin_Continue;
+}
+
+
 ////////////////
 // - Events - //
 ////////////////
@@ -219,7 +291,7 @@ public void LateLoadSupport()
 // This happens when a player spawns
 public void RemoveAllWeapons(int client)
 {
-	for(int loop3 = 0; loop3 < 4 ; loop3++)
+	for(int loop3 = 0; loop3 < 4; loop3++)
 	{
 		for(int WeaponNumber = 0; WeaponNumber < 24; WeaponNumber++)
 		{
