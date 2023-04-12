@@ -346,6 +346,12 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 
 		// Changes the player's dash to be on cooldown
 		playerCooldownDash[client] = 8.0;
+
+		// Changes the client's movement speed to a high value
+		SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 3.25);
+
+		// Changes the client's movement speed back to normal after a short time
+		CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
 	}
 
 
@@ -1260,6 +1266,22 @@ public Action Timer_RemoveDecoyGrenade(Handle Timer, int entity)
 
 	// Kills the entity, removing it from the game
 	AcceptEntityInput(entity, "Kill");
+
+	return Plugin_Continue;
+}
+
+
+// This happens 0.5 seconds after a player presses their dash button
+public Action Timer_ResetPlayerSpeed(Handle Timer, int client)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// Changes the client's movement speed back to normal
+	SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 1.0);
 
 	return Plugin_Continue;
 }
