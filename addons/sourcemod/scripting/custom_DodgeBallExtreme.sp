@@ -759,14 +759,45 @@ public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast
 
 	// Disables the usage of dash and catch
 	isPlayerFeaturesAvailable = false;
+
+	PrintToChatAll("Debug - A new round has started");
 }
 
 
 // This happens when a new round starts and the freeze time has expired
 public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroadcast)
 {
+	// Loops through all of the clients
+	for (int client = 1; client <= MaxClients; client++)
+	{
+		// If the client does not meet our validation criteria then execute this section
+		if(!IsValidClient(client))
+		{
+			continue;
+		}
+
+		// If the client is a bot then execute this section
+		if(IsFakeClient(client))
+		{
+			continue;
+		}
+
+		// If the sound is not already precached then execute this section
+		if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav"))
+		{	
+			// Precaches the sound file
+			PrecacheSound("manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", true);
+		}
+
+		// Emits a sound to the specified client that only they can hear
+		EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+
+	}
+
 	// Enables the usage of dash and catch
 	isPlayerFeaturesAvailable = true;
+
+	PrintToChatAll("Debug - The freeze-time ran out");
 }
 
 
@@ -1068,8 +1099,8 @@ public void DownloadAndPrecacheFiles()
 	effectSpriteSheet = PrecacheModel("manifest/dodgeball_extreme/laser.vmt");
 
 	// Precaches the specified sound
-	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dodgeball_impact.mp3", true);
-	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_refereewhistle_blown.mp3", true);
+	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", true);
+	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", true);
 }
 
 
