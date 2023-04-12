@@ -36,6 +36,7 @@ public Plugin myinfo =
 bool isPlayerDucking[MAXPLAYERS + 1] = {false,...};
 bool isPlayerRecentlyConnected[MAXPLAYERS + 1] = {false,...};
 bool decoyHasBounced[2049] = {false,...};
+bool isPlayerFeaturesAvailable = true;
 
 // Global Integers
 int effectSpriteSheet = -1;
@@ -46,7 +47,6 @@ float playerCooldownCatch[MAXPLAYERS + 1] = {0.0,...};
 
 // Global Characters
 char hudMessage[1024];
-
 
 
 //////////////////////////
@@ -60,7 +60,9 @@ public void OnPluginStart()
 	// Hooks the events that we intend to use in our plugin
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 //	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
+
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
+	HookEvent("round_freeze_end", Event_RoundFreezeEnd, EventHookMode_Post);
 	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
 
 	// Adds a command istener for when a player inspects their weapon
@@ -330,6 +332,12 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 	// If the player is pressing their USE button then execute this section
 	if(buttons & IN_USE)
 	{
+		// If the client's dash is blocked then execute this section
+		if(!isPlayerFeaturesAvailable)
+		{
+			return Plugin_Continue;
+		}
+
 		// If the player's Dash is on cooldown then execute this section
 		if(playerCooldownDash[client])
 		{
@@ -380,6 +388,12 @@ public Action CommandListener_Inspect(int client, const char[] command, int argc
 
 	// If the client is not alive then execute this section
 	if(!IsPlayerAlive(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the client's catch is blocked then execute this section
+	if(!isPlayerFeaturesAvailable)
 	{
 		return Plugin_Continue;
 	}
@@ -742,6 +756,17 @@ public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast
 
 	// Resets the cooldown of all the clients
 	ResetCooldowns();
+
+	// Disables the usage of dash and catch
+	isPlayerFeaturesAvailable = false;
+}
+
+
+// This happens when a new round starts and the freeze time has expired
+public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroadcast)
+{
+	// Enables the usage of dash and catch
+	isPlayerFeaturesAvailable = true;
 }
 
 
