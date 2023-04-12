@@ -324,6 +324,20 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		return Plugin_Continue;
 	}
 
+	// If the player is pressing their USE button then execute this section
+	if(buttons & IN_USE)
+	{
+		// If the player's Dash is on cooldown then execute this section
+		if(playerCooldownDash[client])
+		{
+			return Plugin_Continue;
+		}
+
+		// Changes the player's dash to be on cooldown
+		playerCooldownDash[client] = 8.0;
+	}
+
+
 	if(buttons & IN_DUCK)
 	{
 		// If the client's ducking status is true then execute this section
@@ -1081,6 +1095,9 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 		// If the player's Dash is not on cooldown then execute this section
 		else
 		{
+			// Changes the player's dash to be off cooldown
+			playerCooldownDash[client] = 0.0;
+
 			// Modifies the contents stored within the hudMessage variable
 			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
 		}
@@ -1098,6 +1115,9 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 		// If the player's catch is not on cooldown then execute this section
 		else
 		{
+			// Changes the player's catch to be off cooldown
+			playerCooldownCatch[client] = 0.0;
+
 			// Modifies the contents stored within the hudMessage variable
 			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
 		}
