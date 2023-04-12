@@ -179,6 +179,12 @@ public Action Hook_DecoySpawnPost(int entity)
 		return Plugin_Continue;
 	}
 
+	// If the client is not alive then execute this section
+	if(!IsPlayerAlive(client))
+	{
+		return Plugin_Continue;
+	}
+
 	// Sets the decoy entity's bounce status to false
 	decoyHasBounced[entity] = false;
 
