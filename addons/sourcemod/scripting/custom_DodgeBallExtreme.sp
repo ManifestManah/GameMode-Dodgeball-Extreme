@@ -34,6 +34,7 @@ public Plugin myinfo =
 
 // Global Booleans
 bool isPlayerDucking[MAXPLAYERS + 1] = {false,...};
+bool isPlayerRecentlyConnected[MAXPLAYERS + 1] = {false,...};
 bool decoyHasBounced[2049] = {false,...};
 
 // Global Integers
@@ -93,6 +94,9 @@ public void OnClientPostAdminCheck(int client)
 	{
 		return;
 	}
+
+	// Sets the client's recently connected status true
+	isPlayerRecentlyConnected[client] = true;
 
 	// Adds a hook to the client which will let us track when the player is eligible to pick up a weapon
 	SDKHook(client, SDKHook_WeaponCanUse, Hook_WeaponCanUse);
@@ -641,6 +645,9 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 
 	// Gives the client a decoy grenade
 	GiveDecoyGrenade(client);
+
+	// Creates and sends a menu with introduction information to the client
+	IntroductionMenu(client);
 }
 
 
@@ -765,6 +772,35 @@ public void GiveDecoyGrenade(int client)
 
 	// Changes the client's amount of decoy grenades to 1
 	SetEntProp(client, Prop_Send, "m_iAmmo", 1, _, 18);
+}
+
+
+// This happens when a player spawns
+public void IntroductionMenu(int client)
+{
+	// If the client's recently connected status is false then execute this section
+	if(!isPlayerRecentlyConnected[client])
+	{
+		return;
+	}
+
+	// Sets the client's recently connected status false
+	isPlayerRecentlyConnected[client] = false;
+
+	// Creates a menu and connects it to a menu handler
+	Menu introductionMenu = new Menu(introductionMenu_Handler);
+
+	// Adds a title to our menu
+	introductionMenu.SetTitle("Dodgeball Extreme - How to play\n---------------------------------------\nWin the round by eliminating all\nof the players on the opposing\nteam, by hitting them with your\ndodgeball, or by catching their\nball before it touches anything.\n \n- [E] grants a burst of speed\n- [F] catch a nearby enemy's ball\n ", "Introduction");
+
+	// Adds an item to our menu
+	introductionMenu.AddItem("Introduction", "I am ready to have fun!", ITEMDRAW_DEFAULT);
+
+	// Disables the menu's exit option 
+	introductionMenu.ExitButton = false;
+
+	// Sends the menu with all of its contents to the client
+	introductionMenu.Display(client, MENU_TIME_FOREVER);
 }
 
 
@@ -1031,4 +1067,10 @@ public bool IsValidClient(int client)
 	return true;
 }
 
+
+// This happens when a player interacts with the introuction menu
+public int introductionMenu_Handler(Menu menu, MenuAction action, int param1, int param2)
+{
+	return;
+}
 
