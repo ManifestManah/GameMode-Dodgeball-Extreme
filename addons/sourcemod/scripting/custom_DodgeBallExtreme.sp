@@ -349,9 +349,10 @@ public void OnGameFrame()
 			continue;
 		}
 	
-
+		// Creates a variable which we will use to store data within
 		float entityPosition[3];
 
+		// Obtain's the position of the entity and store it within our entityPosition variable
 		GetEntPropVector(entity, Prop_Data, "m_vecOrigin", entityPosition);
 
 		// Loops through all of the clients
@@ -381,8 +382,22 @@ public void OnGameFrame()
 				continue;
 			}
 
+			// Creates a variable which we will use to store data within
+			float entityVelocity[3];
+
+			// Obtains the velocity of the entity and store it within the entityVelocity variable 
+			GetEntPropVector(entity, Prop_Data, "m_vecVelocity", entityVelocity);
+
+			// If the velocity is currently 0.0 then execute this section
+			if(GetVectorLength(entityVelocity) == 0.0)
+			{
+				return;
+			}
+
+			// Creates a variable which we will use to store data within
 			float playerPosition[3];
 
+			// Obtain's the position of the client and store it within our playerPosition variable
 			GetEntPropVector(client, Prop_Data, "m_vecOrigin", playerPosition);
 
 			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -391,6 +406,7 @@ public void OnGameFrame()
 			// If the client's ducking status is false then execute this section
 			if(!isPlayerDucking[client])
 			{
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 6.0;
 
 				// If the distance is over 50 then execute this section
@@ -401,6 +417,7 @@ public void OnGameFrame()
 					continue;
 				}
 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 14.0;
 
 				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -414,6 +431,7 @@ public void OnGameFrame()
 					continue;
 				}
 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 12.0;
 
 				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -427,6 +445,7 @@ public void OnGameFrame()
 					continue;
 				}
 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 16.0;
 
 				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -440,6 +459,7 @@ public void OnGameFrame()
 					continue;
 				}
 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 16.0;
 
 				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -457,7 +477,7 @@ public void OnGameFrame()
 			// If the client's ducking status is true then execute this section
 			else
 			{
-				// 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 7.0;
 
 				// If the distance is over 50 then execute this section
@@ -468,6 +488,7 @@ public void OnGameFrame()
 					continue;
 				}
 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 14.0;
 
 				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -481,6 +502,7 @@ public void OnGameFrame()
 					continue;
 				}
 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 14.0;
 
 				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -494,6 +516,7 @@ public void OnGameFrame()
 					continue;
 				}
 
+				// Modifies the coordinate position on the z-axis
 				playerPosition[2] += 14.0;
 
 				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
@@ -519,14 +542,6 @@ public void inflictdamage(int client, int entity, int attacker)
 {
 	// Sets the decoy entity's bounce status to true
 	decoyHasBounced[entity] = true;
-
-//	float damageForce[3];
-
-//	float entityPosition[3];
-
-//	GetEntPropVector(entity, Prop_Data, "m_vecVelocity", damageForce);
-
-//	GetEntPropVector(entity, Prop_Data, "m_vecOrigin", entityPosition);
 
 	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
 	SDKHooks_TakeDamage(client, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
@@ -576,19 +591,22 @@ public void Hook_DecoyStartTouch(int entity, int other)
 		return;
 	}
 
-	float damageForce[3];
+	// Creates a variable which we will use to store data within
+	float entityVelocity[3];
 
-	GetEntPropVector(entity, Prop_Data, "m_vecVelocity", damageForce);
+	// Obtains the velocity of the entity and store it within the entityVelocity variable 
+	GetEntPropVector(entity, Prop_Data, "m_vecVelocity", entityVelocity);
 
-	if(GetVectorLength(damageForce) == 0.0)
+	// If the velocity is currently 0.0 then execute this section
+	if(GetVectorLength(entityVelocity) == 0.0)
 	{
 		return;
 	}
 
-	PrintToChat(attacker, "Physically Hit A Player");
-
 	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
 	SDKHooks_TakeDamage(other, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
+
+	PrintToChat(attacker, "Physically Hit A Player");
 }
 
 
@@ -630,14 +648,14 @@ public void Event_WeaponFire(Handle event, const char[] name, bool dontBroadcast
 		return;
 	}
 
-	PrintToChat(client, "Debug - Weapon Fired!");
-
 	/* NOTE: Using any lower time gap will cause the player to be unable to
 			 fully receive the decoy grenade, and render them unable to see
 			 the view model, as well as throw the grenade. */
 
 	// Gives the client a decoy grenade after 0.8 seconds
 	CreateTimer(0.8, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+
+	PrintToChat(client, "Debug - Weapon Fired!");
 }
 
 
