@@ -41,8 +41,8 @@ bool decoyHasBounced[2049] = {false,...};
 int effectSpriteSheet = -1;
 
 // Global Floats
-float playerCooldownDash[MAXPLAYERS + 1] = {1.0,...};
-float playerCooldownCatch[MAXPLAYERS + 1] = {1.0,...};
+float playerCooldownDash[MAXPLAYERS + 1] = {0.0,...};
+float playerCooldownCatch[MAXPLAYERS + 1] = {0.0,...};
 
 // Global Characters
 char hudMessage[1024];
@@ -78,71 +78,6 @@ public void OnPluginStart()
 	// Fixes an issue with the hint area not displaying html colors
 	AllowHtmlHintMessages();
 }
-
-
-// This happens once every 0.1 seconds and updates the player's cooldown HUD element
-public Action Timer_PlayerCooldownHud(Handle timer)
-{
-	// Resets the contents of the hudMessage variable
-	hudMessage = "";
-
-	// Loops through all of the clients
-	for (int client = 1; client <= MaxClients; client++)
-	{
-		// If the client does not meet our validation criteria then execute this section
-		if(!IsValidClient(client))
-		{
-			continue;
-		}
-
-		// If the client is a bot then execute this section
-		if(IsFakeClient(client))
-		{
-			continue;
-		}
-
-		// Subtracts 0.1 from the current value of playerCooldownDash[client]
-		playerCooldownDash[client] -= 0.1;
-
-		// Subtracts 0.1 from the current value of playerCooldownCatch[client]
-		playerCooldownCatch[client] -= 0.1;
-
-		// If the player's Dash is on cooldown then execute this section
-		if(playerCooldownDash[client] > 0.0)
-		{
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
-		}
-
-		// If the player's Dash is not on cooldown then execute this section
-		else
-		{
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
-		}
-
-		// If the player's catch is on cooldown then execute this section
-		if(playerCooldownCatch[client] > 0.0)
-		{
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
-		}
-
-		// If the player's catch is not on cooldown then execute this section
-		else
-		{
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
-		}
-
-		// Displays the contents of our hudMessage variable to the client in the hint text area of the screen 
-		PrintHintText(client, hudMessage);
-	}
-
-	return Plugin_Continue;
-}
-
-
 
 
 
@@ -720,8 +655,6 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 		return;
 	}
 
-	playerCooldownDash[client] = 10.0;
-
 	// Removes all the weapons from the client
 	RemoveAllWeapons(client);
 
@@ -761,6 +694,9 @@ public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast
 {
 	// Removes all of the hostages from the map
 	RemoveEntityHostage();
+
+	// Resets the cooldown of all the clients
+	ResetCooldowns();
 }
 
 
@@ -996,6 +932,33 @@ public void RemoveEntityHostage()
 }
 
 
+// This happens when a new round starts
+public void ResetCooldowns()
+{
+	// Loops through all of the clients
+	for (int client = 1; client <= MaxClients; client++)
+	{
+		// If the client does not meet our validation criteria then execute this section
+		if(!IsValidClient(client))
+		{
+			continue;
+		}
+
+		// If the client is a bot then execute this section
+		if(IsFakeClient(client))
+		{
+			continue;
+		}
+
+		// Resets the cooldown of the player's dash
+		playerCooldownDash[client] = 0.0;
+
+		// Resets the cooldown of the player's catch
+		playerCooldownCatch[client] = 0.0;
+	}
+}
+
+
 // This happens when a decoy grenade projectile has been spawned
 public void CreateGrenadeTrail(int client, int entity, int red, int green, int blue, int alpha)
 {
@@ -1078,6 +1041,69 @@ public Action Timer_CleanFloor(Handle timer)
 
 		// Removes the entity from the map 
 		AcceptEntityInput(entity, "Kill");
+	}
+
+	return Plugin_Continue;
+}
+
+
+// This happens once every 0.1 seconds and updates the player's cooldown HUD element
+public Action Timer_PlayerCooldownHud(Handle timer)
+{
+	// Resets the contents of the hudMessage variable
+	hudMessage = "";
+
+	// Loops through all of the clients
+	for (int client = 1; client <= MaxClients; client++)
+	{
+		// If the client does not meet our validation criteria then execute this section
+		if(!IsValidClient(client))
+		{
+			continue;
+		}
+
+		// If the client is a bot then execute this section
+		if(IsFakeClient(client))
+		{
+			continue;
+		}
+
+		// If the player's Dash is on cooldown then execute this section
+		if(playerCooldownDash[client] > 0.0)
+		{
+			// Subtracts 0.1 from the current value of playerCooldownDash[client]
+			playerCooldownDash[client] -= 0.1;
+
+			// Modifies the contents stored within the hudMessage variable
+			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
+		}
+
+		// If the player's Dash is not on cooldown then execute this section
+		else
+		{
+			// Modifies the contents stored within the hudMessage variable
+			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
+		}
+
+		// If the player's catch is on cooldown then execute this section
+		if(playerCooldownCatch[client] > 0.0)
+		{
+			// Subtracts 0.1 from the current value of playerCooldownCatch[client]
+			playerCooldownCatch[client] -= 0.1;
+			
+			// Modifies the contents stored within the hudMessage variable
+			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
+		}
+
+		// If the player's catch is not on cooldown then execute this section
+		else
+		{
+			// Modifies the contents stored within the hudMessage variable
+			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
+		}
+
+		// Displays the contents of our hudMessage variable to the client in the hint text area of the screen 
+		PrintHintText(client, hudMessage);
 	}
 
 	return Plugin_Continue;
