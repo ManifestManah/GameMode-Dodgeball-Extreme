@@ -203,6 +203,9 @@ public Action Hook_DecoySpawnPost(int entity)
 	{
 		// Changes the color of the entity to the specified RGB color
 		DispatchKeyValue(entity, "rendercolor", "160 0 0");
+
+		// Creates a colored beam trail effect and attaches it to the decoy entity
+		CreateGrenadeTrail(client, entity, 160, 0, 0, 210);
 	}
 
 	// If the client is on the counter-terrorist team then execute this section
@@ -210,6 +213,9 @@ public Action Hook_DecoySpawnPost(int entity)
 	{
 		// Changes the color of the entity to the specified RGB color
 		DispatchKeyValue(entity, "rendercolor", "0 0 180");
+
+		// Creates a colored beam trail effect and attaches it to the decoy entity
+		CreateGrenadeTrail(client, entity, 0, 0, 180, 210);
 	}
 
 	// Adds a hook to our grenade entity to notify of us when the grenade will touch something
@@ -844,6 +850,32 @@ public void RemoveEntityHostage()
 
 		PrintToChatAll("Debug - A Hostage Spawn has been removed from the map :%i", entity);
 	}
+}
+
+
+// This happens when a decoy grenade projectile has been spawned
+public void CreateGrenadeTrail(int client, int entity, int red, int green, int blue, int alpha)
+{
+	// Creates an array containing 4 values
+	int TrailColor[4];
+
+	// Changes the first value to the value equals to our red variable
+	TrailColor[0] = red;
+
+	// Changes the first value to the value equals to our green variable
+	TrailColor[1] = green;
+
+	// Changes the first value to the value equals to our blue variable
+	TrailColor[2] = blue;
+
+	// Changes the first value to the value equals to our alpha variable
+	TrailColor[3] = alpha;
+
+	// Creates a temporary visual effect beam and attaches it to the grenade entity
+	TE_SetupBeamFollow(entity, SpriteSheet, SpriteSheet, 0.3, 8.0, 0.1, 1, TrailColor);
+
+	// Displays the temporary visiual effect to all players
+	TE_SendToAll();
 }
 
 
