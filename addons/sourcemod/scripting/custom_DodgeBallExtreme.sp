@@ -63,6 +63,9 @@ public void OnPluginStart()
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
 	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
 
+	// Adds a command istener for when a player inspects their weapon
+	AddCommandListener(CommandListener_Inspect, "+lookatweapon");
+
 	// Removes any unowned weapon and item entities from the map every 2.0 seconds
 	CreateTimer(2.0, Timer_CleanFloor, _, TIMER_REPEAT);
 
@@ -361,6 +364,34 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		// Sets the client's ducking status true
 		isPlayerDucking[client] = false;
 	}
+
+	return Plugin_Continue;
+}
+
+
+// This happens when a player tries to inspect their weapon
+public Action CommandListener_Inspect(int client, const char[] command, int argc)
+{
+	// If the player meets our criteria for validation then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the client is not alive then execute this section
+	if(!IsPlayerAlive(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the player's catch is on cooldown then execute this section
+	if(playerCooldownCatch[client])
+	{
+		return Plugin_Continue;
+	}
+
+	// Changes the player's catch to be on cooldown
+	playerCooldownCatch[client] = 5.0;
 
 	return Plugin_Continue;
 }
@@ -1085,11 +1116,11 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 		// If the player's Dash is on cooldown then execute this section
 		if(playerCooldownDash[client] > 0.0)
 		{
-			// Subtracts 0.1 from the current value of playerCooldownDash[client]
-			playerCooldownDash[client] -= 0.1;
-
 			// Modifies the contents stored within the hudMessage variable
 			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
+
+			// Subtracts 0.1 from the current value of playerCooldownDash[client]
+			playerCooldownDash[client] -= 0.1;
 		}
 
 		// If the player's Dash is not on cooldown then execute this section
@@ -1105,11 +1136,11 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 		// If the player's catch is on cooldown then execute this section
 		if(playerCooldownCatch[client] > 0.0)
 		{
+			// Modifies the contents stored within the hudMessage variable
+			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownCatch[client]);
+
 			// Subtracts 0.1 from the current value of playerCooldownCatch[client]
 			playerCooldownCatch[client] -= 0.1;
-			
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
 		}
 
 		// If the player's catch is not on cooldown then execute this section
