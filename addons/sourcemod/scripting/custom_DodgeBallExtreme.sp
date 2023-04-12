@@ -120,6 +120,9 @@ public void OnClientPostAdminCheck(int client)
 
 	// Adds a hook to the client which will let us track when the player is eligible to pick up a weapon
 	SDKHook(client, SDKHook_WeaponCanUse, Hook_WeaponCanUse);
+
+	// Adds a hook to the client which will let us track when the player takes damage
+	SDKHook(client, SDKHook_OnTakeDamage, Hook_OnTakeDamage);
 }
 
 
@@ -134,6 +137,9 @@ public void OnClientDisconnect(int client)
 
 	// Removes the hook that we had added to the client to track when he was eligible to pick up weapons
 	SDKUnhook(client, SDKHook_WeaponCanUse, Hook_WeaponCanUse);
+
+	// Removes the hook that we had added to the client to track when the player took damage
+	SDKUnhook(client, SDKHook_OnTakeDamage, Hook_OnTakeDamage);
 }
 
 
@@ -171,6 +177,54 @@ public Action Hook_WeaponCanUse(int client, int weapon)
 
 	return Plugin_Handled;
 }
+
+
+
+// This happens when the player takes damage
+public Action Hook_OnTakeDamage(int client, int &attacker, int &inflictor, float &damage, int &damagetype) 
+{
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the attacker does not meet our validation criteria then execute this section
+	if(!IsValidClient(attacker))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the inflictor is not a valid entity then execute this section
+	if(!IsValidEntity(inflictor))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the victim and attacker is on the same team
+	if(GetClientTeam(client) == GetClientTeam(attacker))
+	{
+		return Plugin_Continue;
+	}
+
+	// Creates a variable to store our data within
+	char className[64];
+
+	// Obtains the classname of the inflictor entity and store it within our classname variable
+	GetEdictClassname(inflictor, className, sizeof(className));
+
+	// If the inflictor entity is not a decoy projectile then execute this section
+	if(!StrEqual(className, "decoy_projectile", false))
+	{
+		return Plugin_Continue;
+	}
+
+	// Changes the amount of damage to zero
+	damage = 0.0;
+
+	return Plugin_Changed;
+}
+
 
 
 // This happens when a new entity is created
@@ -827,6 +881,9 @@ public void LateLoadSupport()
 
 		// Adds a hook to the client which will let us track when the player is eligible to pick up a weapon
 		SDKHook(client, SDKHook_WeaponCanUse, Hook_WeaponCanUse);
+
+		// Adds a hook to the client which will let us track when the player takes damage
+		SDKHook(client, SDKHook_OnTakeDamage, Hook_OnTakeDamage);
 	}
 }
 
