@@ -893,9 +893,15 @@ public void DownloadAndPrecacheFiles()
 	// Adds the specified file to the download table
 	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vmt");
 	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vtf");
+	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_dodgeball_impact.wav");
+	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav");
 
 	// Precaches the specified model / texture
 	effectSpriteSheet = PrecacheModel("manifest/dodgeball_extreme/laser.vmt");
+
+	// Precaches the specified sound
+	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dodgeball_impact.mp3", true);
+	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_refereewhistle_blown.mp3", true);
 }
 
 
