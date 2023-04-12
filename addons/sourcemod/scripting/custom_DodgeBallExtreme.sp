@@ -36,6 +36,8 @@ public Plugin myinfo =
 bool isPlayerDucking[MAXPLAYERS + 1] = {false,...};
 bool decoyHasBounced[2049] = {false,...};
 
+// Global Integers
+int effectSpriteSheet = -1;
 
 
 //////////////////////////
@@ -57,6 +59,9 @@ public void OnPluginStart()
 
 	// Allows the modification to be loaded while the server is running, without causing gameplay issues
 	LateLoadSupport();
+
+	// Adds files to the download list, and precaches them
+	DownloadAndPrecacheFiles();
 }
 
 
@@ -74,6 +79,9 @@ public void OnMapStart()
 
 	// Removes Hostage Rescue Points from the map
 	RemoveEntityHostageRescuePoint();
+
+	// Adds files to the download list, and precaches them
+	DownloadAndPrecacheFiles();
 }
 
 
@@ -872,10 +880,22 @@ public void CreateGrenadeTrail(int client, int entity, int red, int green, int b
 	TrailColor[3] = alpha;
 
 	// Creates a temporary visual effect beam and attaches it to the grenade entity
-	TE_SetupBeamFollow(entity, SpriteSheet, SpriteSheet, 0.3, 8.0, 0.1, 1, TrailColor);
+	TE_SetupBeamFollow(entity, effectSpriteSheet, effectSpriteSheet, 0.3, 8.0, 0.1, 1, TrailColor);
 
 	// Displays the temporary visiual effect to all players
 	TE_SendToAll();
+}
+
+
+// This happen when the plugin is loaded and when a new map starts
+public void DownloadAndPrecacheFiles()
+{
+	// Adds the specified file to the download table
+	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vmt");
+	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vtf");
+
+	// Precaches the specified model / texture
+	effectSpriteSheet = PrecacheModel("manifest/dodgeball_extreme/laser.vmt");
 }
 
 
