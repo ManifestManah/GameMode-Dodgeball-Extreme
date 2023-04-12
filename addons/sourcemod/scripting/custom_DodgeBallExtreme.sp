@@ -33,8 +33,8 @@ public Plugin myinfo =
 //////////////////////////
 
 // Global Booleans
+bool isPlayerDucking[MAXPLAYERS + 1] = {false,...};
 bool decoyHasBounced[2049] = {false,...};
-
 
 
 
@@ -270,6 +270,49 @@ public Action Hook_DecoyTouchPost(int entity, int client)
 }
 
 
+// This happens when a player presses a button
+public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon)
+{
+	// If the player meets our criteria for validation then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the client is not alive then execute this section
+	if(!IsPlayerAlive(client))
+	{
+		return Plugin_Continue;
+	}
+
+	if(buttons & IN_DUCK)
+	{
+		// If the client's ducking status is true then execute this section
+		if(isPlayerDucking[client])
+		{
+			return Plugin_Continue;
+		}
+
+		// Sets the client's ducking status true
+		isPlayerDucking[client] = true;
+	}
+
+	else
+	{
+		// If the client's ducking status is false then execute this section
+		if(!isPlayerDucking[client])
+		{
+			return Plugin_Continue;
+		}
+
+		// Sets the client's ducking status true
+		isPlayerDucking[client] = false;
+	}
+
+	return Plugin_Continue;
+}
+
+
 // This happens every frame / tick
 public void OnGameFrame()
 {
@@ -339,68 +382,125 @@ public void OnGameFrame()
 			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
 			float distance = GetVectorDistance(entityPosition, playerPosition);
 
-			playerPosition[2] += 6.0;
-
-			// If the distance is over 50 then execute this section
-			if(distance < 16.50)
+			// If the client's ducking status is false then execute this section
+			if(!isPlayerDucking[client])
 			{
-				inflictdamage(client, entity, attacker);
+				playerPosition[2] += 6.0;
 
-				continue;
+				// If the distance is over 50 then execute this section
+				if(distance < 16.50)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
+
+				playerPosition[2] += 14.0;
+
+				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+				distance = GetVectorDistance(entityPosition, playerPosition);
+
+				// If the distance is over 50 then execute this section
+				if(distance < 17.50)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
+
+				playerPosition[2] += 12.0;
+
+				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+				distance = GetVectorDistance(entityPosition, playerPosition);
+
+				// If the distance is over 50 then execute this section
+				if(distance < 17.0)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
+
+				playerPosition[2] += 16.0;
+
+				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+				distance = GetVectorDistance(entityPosition, playerPosition);
+
+				// If the distance is over 50 then execute this section
+				if(distance < 18.50)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
+
+				playerPosition[2] += 16.0;
+
+				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+				distance = GetVectorDistance(entityPosition, playerPosition);
+
+				// If the distance is over 50 then execute this section
+				if(distance < 13.0)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
 			}
 
-			playerPosition[2] += 14.0;
-
-			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
-			distance = GetVectorDistance(entityPosition, playerPosition);
-
-			// If the distance is over 50 then execute this section
-			if(distance < 17.50)
+			// If the client's ducking status is true then execute this section
+			else
 			{
-				inflictdamage(client, entity, attacker);
+				// 
+				playerPosition[2] += 7.0;
 
-				continue;
+				// If the distance is over 50 then execute this section
+				if(distance < 16.50)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
+
+				playerPosition[2] += 14.0;
+
+				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+				distance = GetVectorDistance(entityPosition, playerPosition);
+
+				// If the distance is over 50 then execute this section
+				if(distance < 17.50)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
+
+				playerPosition[2] += 14.0;
+
+				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+				distance = GetVectorDistance(entityPosition, playerPosition);
+
+				// If the distance is over 50 then execute this section
+				if(distance < 18.25)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
+
+				playerPosition[2] += 14.0;
+
+				// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+				distance = GetVectorDistance(entityPosition, playerPosition);
+
+				// If the distance is over 50 then execute this section
+				if(distance < 13.0)
+				{
+					inflictdamage(client, entity, attacker);
+
+					continue;
+				}
 			}
-
-			playerPosition[2] += 12.0;
-
-			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
-			distance = GetVectorDistance(entityPosition, playerPosition);
-
-			// If the distance is over 50 then execute this section
-			if(distance < 17.0)
-			{
-				inflictdamage(client, entity, attacker);
-
-				continue;
-			}
-
-			playerPosition[2] += 16.0;
-
-			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
-			distance = GetVectorDistance(entityPosition, playerPosition);
-
-			// If the distance is over 50 then execute this section
-			if(distance < 18.50)
-			{
-				inflictdamage(client, entity, attacker);
-
-				continue;
-			}
-
-			playerPosition[2] += 16.0;
-
-			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
-			distance = GetVectorDistance(entityPosition, playerPosition);
-
-			// If the distance is over 50 then execute this section
-			if(distance < 13.0)
-			{
-				inflictdamage(client, entity, attacker);
-
-				continue;
-			}
-
 		}
 	}
 }
