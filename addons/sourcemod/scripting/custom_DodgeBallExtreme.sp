@@ -880,7 +880,7 @@ public void CreateGrenadeTrail(int client, int entity, int red, int green, int b
 	TrailColor[3] = alpha;
 
 	// Creates a temporary visual effect beam and attaches it to the grenade entity
-	TE_SetupBeamFollow(entity, effectSpriteSheet, effectSpriteSheet, 0.3, 8.0, 0.1, 1, TrailColor);
+	TE_SetupBeamFollow(entity, effectSpriteSheet, effectSpriteSheet, 0.65, 12.0, 0.1, 0, TrailColor);
 
 	// Displays the temporary visiual effect to all players
 	TE_SendToAll();
