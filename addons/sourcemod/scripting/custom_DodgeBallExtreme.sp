@@ -209,6 +209,9 @@ public Action Hook_DecoySpawnPost(int entity)
 	// Adds a hook to our grenade entity to notify of us when the grenade will touch something
 	SDKHook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
 
+	// Adds a hook to our grenade entity to notify of us when the grenade will start to touch something
+	SDKHook(entity, SDKHook_StartTouch, Hook_DecoyStartTouch);
+
 	return Plugin_Continue;
 }
 
@@ -267,25 +270,221 @@ public Action Hook_DecoyTouchPost(int entity, int client)
 }
 
 
-
-/* Code Snippet - Will be used later
-// If the decoy entity's bounce status is set to false then execute this section
-if(!decoyHasBounced[entity])
+// This happens every frame / tick
+public void OnGameFrame()
 {
-
-	// If the model is not precached already then execute this section
-	if(!IsModelPrecached("models/props/de_stadium/exercise_ball.mdl"))
+	// Creates a variable named entity with a value of -1
+	int entity = -1;
+	
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "decoy_projectile")) != -1)
 	{
-		// Precaches the specified model
-		PrecacheModel("models/props/de_stadium/exercise_ball.mdl");
+		// If the entity does not meet the criteria of validation then execute this section
+		if(!IsValidEntity(entity))
+		{
+			continue;
+		}
+
+		// If the decoy entity's has bounced already then execute this section
+		if(decoyHasBounced[entity])
+		{
+			continue;
+		}
+
+		// obtains the index of the player that threw the grenade and store it within the attacker variable
+		int attacker = GetEntPropEnt(entity, Prop_Send, "m_hThrower");
+
+		// If the client meets our validation criteria then execute this section
+		if(!IsValidClient(attacker))
+		{
+			continue;
+		}
+	
+
+		float entityPosition[3];
+
+		GetEntPropVector(entity, Prop_Data, "m_vecOrigin", entityPosition);
+
+		// Loops through all of the clients
+		for (int client = 1; client <= MaxClients; client++)
+		{
+			// If the client does not meet our validation criteria then execute this section
+			if(!IsValidClient(client))
+			{
+				continue;
+			}
+
+			// If the client is also the attacker then execute this section
+			if(client == attacker)
+			{
+				continue;
+			}
+
+			// If the client is not alive then execute this section
+			if(!IsPlayerAlive(client))
+			{
+				continue;
+			}
+
+			// If the client and attacker are on the same then execute this section
+			if(GetClientTeam(client) == GetClientTeam(attacker))
+			{
+				continue;
+			}
+
+			float playerPosition[3];
+
+			GetEntPropVector(client, Prop_Data, "m_vecOrigin", playerPosition);
+
+			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+			float distance = GetVectorDistance(entityPosition, playerPosition);
+
+			playerPosition[2] += 6.0;
+
+			// If the distance is over 50 then execute this section
+			if(distance < 16.50)
+			{
+				inflictdamage(client, entity, attacker);
+
+				continue;
+			}
+
+			playerPosition[2] += 14.0;
+
+			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+			distance = GetVectorDistance(entityPosition, playerPosition);
+
+			// If the distance is over 50 then execute this section
+			if(distance < 17.50)
+			{
+				inflictdamage(client, entity, attacker);
+
+				continue;
+			}
+
+			playerPosition[2] += 12.0;
+
+			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+			distance = GetVectorDistance(entityPosition, playerPosition);
+
+			// If the distance is over 50 then execute this section
+			if(distance < 17.0)
+			{
+				inflictdamage(client, entity, attacker);
+
+				continue;
+			}
+
+			playerPosition[2] += 16.0;
+
+			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+			distance = GetVectorDistance(entityPosition, playerPosition);
+
+			// If the distance is over 50 then execute this section
+			if(distance < 18.50)
+			{
+				inflictdamage(client, entity, attacker);
+
+				continue;
+			}
+
+			playerPosition[2] += 16.0;
+
+			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+			distance = GetVectorDistance(entityPosition, playerPosition);
+
+			// If the distance is over 50 then execute this section
+			if(distance < 13.0)
+			{
+				inflictdamage(client, entity, attacker);
+
+				continue;
+			}
+
+		}
+	}
+}
+
+
+
+
+
+public void inflictdamage(int client, int entity, int attacker)
+{
+	// Sets the decoy entity's bounce status to true
+	decoyHasBounced[entity] = true;
+
+//	float damageForce[3];
+
+//	float entityPosition[3];
+
+//	GetEntPropVector(entity, Prop_Data, "m_vecVelocity", damageForce);
+
+//	GetEntPropVector(entity, Prop_Data, "m_vecOrigin", entityPosition);
+
+	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
+	SDKHooks_TakeDamage(client, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
+
+	PrintToChatAll("Debug - Radius Within Range Of A Target");
+}
+
+
+
+public void Hook_DecoyStartTouch(int entity, int other)
+{
+	// If the entity does not meet our criteria validation then execute this section
+	if(!IsValidEntity(entity))
+	{
+		return;
 	}
 
-	// Changes the client's player model to the specified model
-	SetEntityModel(client, "models/props/de_stadium/exercise_ball.mdl");
+	// If the decoy entity's bounce status is set to true then execute this section
+	if(decoyHasBounced[entity])
+	{
+		return;
+	}
 
+	// If the entity that the throwing knife collided with is not a player index then execute this section
+	if(other < 0 || other > MaxClients)
+	{
+		return;
+	}
 
+	// If the client meets our validation criteria then execute this section
+	if(!IsValidClient(other))
+	{
+		return;
+	}
+
+	// obtains the index of the player that threw the grenade and store it within the attacker variable
+	int attacker = GetEntPropEnt(entity, Prop_Send, "m_hThrower");
+
+	// If the client meets our validation criteria then execute this section
+	if(!IsValidClient(attacker))
+	{
+		return;
+	}
+
+	if(attacker == other)
+	{
+		return;
+	}
+
+	float damageForce[3];
+
+	GetEntPropVector(entity, Prop_Data, "m_vecVelocity", damageForce);
+
+	if(GetVectorLength(damageForce) == 0.0)
+	{
+		return;
+	}
+
+	PrintToChat(attacker, "Physically Hit A Player");
+
+	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
+	SDKHooks_TakeDamage(other, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
 }
-*/
+
 
 
 ////////////////
