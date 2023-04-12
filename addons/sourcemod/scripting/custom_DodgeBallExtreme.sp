@@ -549,22 +549,6 @@ public void OnGameFrame()
 }
 
 
-
-
-
-public void inflictdamage(int client, int entity, int attacker)
-{
-	// Sets the decoy entity's bounce status to true
-	decoyHasBounced[entity] = true;
-
-	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
-	SDKHooks_TakeDamage(client, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
-
-	PrintToChatAll("Debug - Radius Within Range Of A Target");
-}
-
-
-
 public void Hook_DecoyStartTouch(int entity, int other)
 {
 	// If the entity does not meet our criteria validation then execute this section
@@ -616,6 +600,16 @@ public void Hook_DecoyStartTouch(int entity, int other)
 	{
 		return;
 	}
+
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav"))
+	{	
+		// Precaches the sound file
+		PrecacheSound("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", true);
+	}
+
+	// Emits a sound to the specified client that only they can hear
+	EmitSoundToClient(other, "manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
 	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
 	SDKHooks_TakeDamage(other, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
@@ -702,6 +696,29 @@ public void LateLoadSupport()
 		// Adds a hook to the client which will let us track when the player is eligible to pick up a weapon
 		SDKHook(client, SDKHook_WeaponCanUse, Hook_WeaponCanUse);
 	}
+}
+
+
+// This happens every frame / tick if a player is within range of an enemy's active dodgeball 
+public void inflictdamage(int client, int entity, int attacker)
+{
+	// Sets the decoy entity's bounce status to true
+	decoyHasBounced[entity] = true;
+
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav"))
+	{	
+		// Precaches the sound file
+		PrecacheSound("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", true);
+	}
+
+	// Emits a sound to the specified client that only they can hear
+	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+
+	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
+	SDKHooks_TakeDamage(client, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
+
+	PrintToChatAll("Debug - Radius Within Range Of A Target");
 }
 
 
