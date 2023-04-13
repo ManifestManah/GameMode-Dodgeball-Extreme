@@ -1344,6 +1344,33 @@ public Action Timer_ResetPlayerSpeed(Handle Timer, int client)
 	// Changes the client's movement speed back to normal
 	SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 1.0);
 
+	// Creates a variable which we will use to store data within
+	char soundFilePath[64];
+
+	// If the randomly chosen number is 0 then execute this section
+	if(GetRandomInt(0, 1) == 0)
+	{
+		// Changes the contents stored within our soundFilePath variable
+		soundFilePath = "manifest/dodgeball_extreme/sfx_dash1.wav";
+	}
+
+	// If the randomly chosen number is 0 then execute this section
+	else
+	{
+		// Changes the contents stored within our soundFilePath variable
+		soundFilePath = "manifest/dodgeball_extreme/sfx_dash2.wav";
+	}
+
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached(soundFilePath))
+	{	
+		// Precaches the sound file
+		PrecacheSound(soundFilePath, true);
+	}
+
+	// Emits a sound to the specified client that only they can hear
+	EmitSoundToClient(client, soundFilePath, SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+
 	return Plugin_Continue;
 }
 
