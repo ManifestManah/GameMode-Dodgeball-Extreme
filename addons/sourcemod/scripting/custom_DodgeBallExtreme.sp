@@ -1155,6 +1155,8 @@ public void DownloadAndPrecacheFiles()
 	// Adds the specified file to the download table
 	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vmt");
 	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vtf");
+	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_dash1.wav");
+	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_dash2.wav");
 	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_dodgeball_impact.wav");
 	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav");
 
@@ -1162,6 +1164,8 @@ public void DownloadAndPrecacheFiles()
 	effectSpriteSheet = PrecacheModel("manifest/dodgeball_extreme/laser.vmt");
 
 	// Precaches the specified sound
+	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dash1.wav", true);
+	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dash2.wav", true);
 	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", true);
 	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", true);
 }
