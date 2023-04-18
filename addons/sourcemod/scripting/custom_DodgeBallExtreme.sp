@@ -19,6 +19,33 @@ public Plugin myinfo =
 };
 
 
+/* To DO (OVerview)
+
+
+Catch
+- Add functionality to allow users to catch grenades by pressing F
+- Display a message in the chat when a ball is caught
+
+
+- Dash
+- - Create custom sprite material
+- - Create custom particle effect
+- - Add code for particle effect integration
+- - Add files to download tables & precaching
+
+
+Review Configurations
+- Possibly add, remove or change some of the default / recommended game mode configurations configurations
+
+
+Models
+- Maybe create a custom ball model?
+- - If so then replace the current model
+- - Also add the resources to the download tables and precache the model
+
+*/
+
+
 
 
 /////////////////
