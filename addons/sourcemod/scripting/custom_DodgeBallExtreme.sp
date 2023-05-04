@@ -2,6 +2,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
+#include <multicolors>
 
 // The code formatting rules we wish to follow
 #pragma semicolon 1;
@@ -19,33 +20,6 @@ public Plugin myinfo =
 };
 
 
-/* To DO (OVerview)
-
-
-Catch
-- Add functionality to allow users to catch grenades by pressing F
-- Display a message in the chat when a ball is caught
-
-
-- Dash
-- - Create custom sprite material
-- - Create custom particle effect
-- - Add code for particle effect integration
-- - Add files to download tables & precaching
-
-
-Review Configurations
-- Possibly add, remove or change some of the default / recommended game mode configurations configurations
-
-
-Models
-- Maybe create a custom ball model?
-- - If so then replace the current model
-- - Also add the resources to the download tables and precache the model
-
-*/
-
-
 
 
 /////////////////
@@ -61,6 +35,7 @@ Models
 
 // Global Booleans
 bool isPlayerDucking[MAXPLAYERS + 1] = {false,...};
+bool playerHasCaughtBall[MAXPLAYERS + 1] = {false,...};
 bool isPlayerRecentlyConnected[MAXPLAYERS + 1] = {false,...};
 bool decoyHasBounced[2049] = {false,...};
 bool isPlayerFeaturesAvailable = true;
@@ -196,8 +171,6 @@ public Action Hook_WeaponCanUse(int client, int weapon)
 	{
 		return Plugin_Continue;
 	}
-
-	PrintToChatAll("%s is restricted", className);
 
 	// Kills the weapon entity, removing it from the game
 	AcceptEntityInput(weapon, "Kill");
@@ -356,8 +329,6 @@ public Action Hook_DecoyTouchPost(int entity, int client)
 		// Sets the decoy entity's bounce status to true
 		decoyHasBounced[entity] = true;
 
-		PrintToChatAll("Debug - Grenade bounced on something that was not a player");
-
 		// Removes the hook that we had attached to the grenade
 		SDKUnhook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
 	}
@@ -365,8 +336,6 @@ public Action Hook_DecoyTouchPost(int entity, int client)
 	// If the client meets our validation criteria then execute this section
 	else
 	{
-		PrintToChatAll("Debug - Grenade bounced on a player");
-
 		// Obtains and stores the entity owner offset within our decoyOwner variable 
 		int decoyOwner = GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
 
@@ -387,8 +356,6 @@ public Action Hook_DecoyTouchPost(int entity, int client)
 
 		// Removes the hook that we had attached to the grenade
 		SDKUnhook(entity, SDKHook_TouchPost, Hook_DecoyTouchPost);
-
-		PrintToChatAll("Debug - Grenade bounced on a friendly player");
 	}
 
 	return Plugin_Continue;
@@ -431,6 +398,33 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		// Changes the client's movement speed to a high value
 		SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 3.25);
 
+		// Creates a variable which we will use to store data within
+		char soundFilePath[64];
+
+		// If the randomly chosen number is 0 then execute this section
+		if(GetRandomInt(0, 1) == 0)
+		{
+			// Changes the contents stored within our soundFilePath variable
+			soundFilePath = "manifest/dodgeball_extreme/sfx_dash1.wav";
+		}
+
+		// If the randomly chosen number is 0 then execute this section
+		else
+		{
+			// Changes the contents stored within our soundFilePath variable
+			soundFilePath = "manifest/dodgeball_extreme/sfx_dash2.wav";
+		}
+
+		// If the sound is not already precached then execute this section
+		if(!IsSoundPrecached(soundFilePath))
+		{	
+			// Precaches the sound file
+			PrecacheSound(soundFilePath, true);
+		}
+
+		// Emits a sound to the specified client that only they can hear
+		EmitSoundToClient(client, soundFilePath, SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+
 		// Changes the client's movement speed back to normal after a short time
 		CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
 	}
@@ -464,6 +458,44 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 }
 
 
+// This happens every frame / tick if a player is within range of an enemy's active dodgeball 
+public void inflictDamageCatch(int client, int entity, int attacker)
+{
+	// Sets the decoy entity's bounce status to true
+	decoyHasBounced[entity] = true;
+
+	// If the client is alive then execute this section
+	if(IsPlayerAlive(client))
+	{
+		// Applies 500 club damage to the attacker from the client with a decoy grenade entity
+		SDKHooks_TakeDamage(attacker, entity, client, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
+
+		PrintToChatAll("Debug - Caught the dodgeball and killed enemy");
+	}
+
+	// If the client is not alive then execute this section
+	else
+	{
+		PrintToChatAll("Debug - Caught the dodgeball but the owner is dead already");
+	}
+
+	// Sets the client's ball caught status true
+	playerHasCaughtBall[client] = true;
+
+	// Changes the player's catch to be on cooldown
+	playerCooldownCatch[client] = 5.0;
+
+	// If the entity does not meet the criteria of validation then execute this section
+	if(!IsValidEntity(entity))
+	{
+		return;
+	}
+
+	// Kills the entity, removing it from the game
+	AcceptEntityInput(entity, "Kill");
+}
+
+
 // This happens when a player tries to inspect their weapon
 public Action CommandListener_Inspect(int client, const char[] command, int argc)
 {
@@ -490,6 +522,159 @@ public Action CommandListener_Inspect(int client, const char[] command, int argc
 	{
 		return Plugin_Continue;
 	}
+
+	// Creates a variable named entity with a value of -1
+	int entity = -1;
+	
+	// Loops through all of the entities and tries to find any matching the specified criteria
+	while ((entity = FindEntityByClassname(entity, "decoy_projectile")) != -1)
+	{
+		// If the client's ball caught status is true then execute this section
+		if(playerHasCaughtBall[client])
+		{
+			PrintToChat(client, "Debug - You can only catch one ball at a time");
+
+			// Changes the player's catch to be on cooldown
+			playerCooldownCatch[client] = 5.0;
+
+			return Plugin_Continue;
+		}
+
+		// If the entity does not meet the criteria of validation then execute this section
+		if(!IsValidEntity(entity))
+		{
+			continue;
+		}
+
+		// If the decoy entity's has bounced already then execute this section
+		if(decoyHasBounced[entity])
+		{
+			continue;
+		}
+
+		// obtains the index of the player that threw the grenade and store it within the attacker variable
+		int attacker = GetEntPropEnt(entity, Prop_Send, "m_hThrower");
+
+		// If the client meets our validation criteria then execute this section
+		if(!IsValidClient(attacker))
+		{
+			continue;
+		}
+
+		// If the client and attacker are on the same then execute this section
+		if(GetClientTeam(client) == GetClientTeam(attacker))
+		{
+			continue;
+		}
+
+		// Creates a variable which we will use to store data within
+		float playerPosition[3];
+
+		// Creates a variable which we will use to store data within
+		float entityPosition[3];
+
+		// Obtain's the position of the client and store it within our playerPosition variable
+		GetEntPropVector(client, Prop_Data, "m_vecOrigin", playerPosition);
+
+		// Obtain's the position of the entity and store it within our entityPosition variable
+		GetEntPropVector(entity, Prop_Data, "m_vecOrigin", entityPosition);
+
+		// Modifies the coordinate position on the z-axis
+		playerPosition[2] += 10.0;
+
+		// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+		float distance = GetVectorDistance(entityPosition, playerPosition);
+
+		// If the distance is lower than 31 then execute this section
+		if(distance < 31.0)
+		{
+			// Inflicts damage upon the client that threw the ball
+			inflictDamageCatch(client, entity, attacker);
+
+			return Plugin_Continue;
+		}
+
+		// Modifies the coordinate position on the z-axis
+		playerPosition[2] += 11.0;
+
+		// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+		distance = GetVectorDistance(entityPosition, playerPosition);
+
+		// If the distance is lower than 31 then execute this section
+		if(distance < 31.0)
+		{
+			// Inflicts damage upon the client that threw the ball
+			inflictDamageCatch(client, entity, attacker);
+
+			return Plugin_Continue;
+		}
+
+		// Modifies the coordinate position on the z-axis
+		playerPosition[2] += 11.0;
+
+		// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+		distance = GetVectorDistance(entityPosition, playerPosition);
+
+		// If the distance is lower than 31 then execute this section
+		if(distance < 31.0)
+		{
+			// Inflicts damage upon the client that threw the ball
+			inflictDamageCatch(client, entity, attacker);
+
+			return Plugin_Continue;
+		}
+
+		// Modifies the coordinate position on the z-axis
+		playerPosition[2] += 11.0;
+
+		// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+		distance = GetVectorDistance(entityPosition, playerPosition);
+
+		// If the distance is lower than 31 then execute this section
+		if(distance < 31.0)
+		{
+			// Inflicts damage upon the client that threw the ball
+			inflictDamageCatch(client, entity, attacker);
+
+			return Plugin_Continue;
+		}
+
+		// If the client's ducking status is set to false then execute this section
+		if(!isPlayerDucking[client])
+		{
+			// Modifies the coordinate position on the z-axis
+			playerPosition[2] += 11.0;
+
+			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+			distance = GetVectorDistance(entityPosition, playerPosition);
+
+			// If the distance is lower than 31 then execute this section
+			if(distance < 31.0)
+			{
+				// Inflicts damage upon the client that threw the ball
+				inflictDamageCatch(client, entity, attacker);
+
+				return Plugin_Continue;
+			}
+
+			// Modifies the coordinate position on the z-axis
+			playerPosition[2] += 11.0;
+
+			// Obtains the dsitance from the decoy entity to the client and store it within the distance variable
+			distance = GetVectorDistance(entityPosition, playerPosition);
+
+			// If the distance is lower than 31 then execute this section
+			if(distance < 31.0)
+			{
+				// Inflicts damage upon the client that threw the ball
+				inflictDamageCatch(client, entity, attacker);
+
+				return Plugin_Continue;
+			}
+		}
+	}
+
+	PrintToChat(client, "Debug - You did not manage to catch a ball");
 
 	// Changes the player's catch to be on cooldown
 	playerCooldownCatch[client] = 5.0;
@@ -830,8 +1015,6 @@ public void Event_WeaponFire(Handle event, const char[] name, bool dontBroadcast
 
 	// Gives the client a decoy grenade after 0.8 seconds
 	CreateTimer(0.8, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
-
-	PrintToChat(client, "Debug - Weapon Fired!");
 }
 
 
@@ -846,8 +1029,6 @@ public void Event_RoundStart(Handle event, const char[] name, bool dontBroadcast
 
 	// Disables the usage of dash and catch
 	isPlayerFeaturesAvailable = false;
-
-	PrintToChatAll("Debug - A new round has started");
 }
 
 
@@ -883,8 +1064,6 @@ public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroad
 
 	// Enables the usage of dash and catch
 	isPlayerFeaturesAvailable = true;
-
-	PrintToChatAll("Debug - The freeze-time ran out");
 }
 
 
@@ -971,8 +1150,6 @@ public void GiveDecoyGrenade(int client)
 	// Gives the client the specified weapon
 	GivePlayerItem(client, "weapon_decoy");
 
-	PrintToChat(client, "Debug - Carrying %i Decoys", GetEntProp(client, Prop_Send, "m_iAmmo", _, 18));
-
 	// If the client has 1 decoy then execute this section
 	if(GetEntProp(client, Prop_Send, "m_iAmmo", _, 18) == 1)
 	{
@@ -1030,8 +1207,6 @@ public void RemoveEntityBuyZones()
 
 		// Kills the entity, removing it from the game
 		AcceptEntityInput(entity, "Kill");
-
-		PrintToChatAll("Debug - A Buyzone has been removed from the map :%i", entity);
 	}
 }
 
@@ -1053,8 +1228,6 @@ public void RemoveEntityBombSites()
 
 		// Kills the entity, removing it from the game
 		AcceptEntityInput(entity, "Kill");
-
-		PrintToChatAll("Debug - A Bomb Target has been removed from the map :%i", entity);
 	}
 }
 
@@ -1076,8 +1249,6 @@ public void RemoveEntityHostageRescuePoint()
 
 		// Kills the entity, removing it from the game
 		AcceptEntityInput(entity, "Kill");
-
-		PrintToChatAll("Debug - A Hostage Rescue Point has been removed from the map :%i", entity);
 	}
 }
 
@@ -1099,8 +1270,6 @@ public void RemoveEntityHostage()
 
 		// Kills the entity, removing it from the game
 		AcceptEntityInput(entity, "Kill");
-
-		PrintToChatAll("Debug - A Hostage has been removed from the map :%i", entity);
 	}
 
 	// Changes the value of the entity variable to -1
@@ -1117,8 +1286,6 @@ public void RemoveEntityHostage()
 
 		// Kills the entity, removing it from the game
 		AcceptEntityInput(entity, "Kill");
-
-		PrintToChatAll("Debug - A Hostage Spawn has been removed from the map :%i", entity);
 	}
 }
 
@@ -1146,6 +1313,9 @@ public void ResetCooldowns()
 
 		// Resets the cooldown of the player's catch
 		playerCooldownCatch[client] = 0.0;
+
+		// Sets the client's ball caught status false
+		playerHasCaughtBall[client] = false;
 	}
 }
 
@@ -1299,6 +1469,9 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 			// Changes the player's catch to be off cooldown
 			playerCooldownCatch[client] = 0.0;
 
+			// Sets the client's ball caught status false
+			playerHasCaughtBall[client] = false;
+
 			// Modifies the contents stored within the hudMessage variable
 			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
 		}
@@ -1370,33 +1543,6 @@ public Action Timer_ResetPlayerSpeed(Handle Timer, int client)
 
 	// Changes the client's movement speed back to normal
 	SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 1.0);
-
-	// Creates a variable which we will use to store data within
-	char soundFilePath[64];
-
-	// If the randomly chosen number is 0 then execute this section
-	if(GetRandomInt(0, 1) == 0)
-	{
-		// Changes the contents stored within our soundFilePath variable
-		soundFilePath = "manifest/dodgeball_extreme/sfx_dash1.wav";
-	}
-
-	// If the randomly chosen number is 0 then execute this section
-	else
-	{
-		// Changes the contents stored within our soundFilePath variable
-		soundFilePath = "manifest/dodgeball_extreme/sfx_dash2.wav";
-	}
-
-	// If the sound is not already precached then execute this section
-	if(!IsSoundPrecached(soundFilePath))
-	{	
-		// Precaches the sound file
-		PrecacheSound(soundFilePath, true);
-	}
-
-	// Emits a sound to the specified client that only they can hear
-	EmitSoundToClient(client, soundFilePath, SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
 	return Plugin_Continue;
 }
