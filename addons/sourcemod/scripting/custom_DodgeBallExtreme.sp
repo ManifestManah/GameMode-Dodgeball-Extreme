@@ -35,7 +35,6 @@ public Plugin myinfo =
 
 // Global Booleans
 bool isPlayerDucking[MAXPLAYERS + 1] = {false,...};
-bool playerHasCaughtBall[MAXPLAYERS + 1] = {false,...};
 bool isPlayerRecentlyConnected[MAXPLAYERS + 1] = {false,...};
 bool decoyHasBounced[2049] = {false,...};
 bool isPlayerFeaturesAvailable = true;
@@ -497,9 +496,6 @@ public void inflictDamageCatch(int client, int entity, int attacker)
 		PrintToChat(client, "You Caught player %s's ball but they were already dead.", nameOfAttacker);
 	}
 
-	// Sets the client's ball caught status true
-	playerHasCaughtBall[client] = true;
-
 	// Changes the player's catch to be on cooldown
 	playerCooldownCatch[client] = 5.0;
 
@@ -547,17 +543,6 @@ public Action CommandListener_Inspect(int client, const char[] command, int argc
 	// Loops through all of the entities and tries to find any matching the specified criteria
 	while ((entity = FindEntityByClassname(entity, "decoy_projectile")) != -1)
 	{
-		// If the client's ball caught status is true then execute this section
-		if(playerHasCaughtBall[client])
-		{
-			PrintToChat(client, "Debug - You can only catch one ball at a time");
-
-			// Changes the player's catch to be on cooldown
-			playerCooldownCatch[client] = 5.0;
-
-			return Plugin_Continue;
-		}
-
 		// If the entity does not meet the criteria of validation then execute this section
 		if(!IsValidEntity(entity))
 		{
@@ -692,7 +677,8 @@ public Action CommandListener_Inspect(int client, const char[] command, int argc
 		}
 	}
 
-	PrintToChat(client, "Debug - No active balls were in range for you to catch");
+	// Sends a message to the client in the chat area
+	PrintToChat(client, "There were no active ball within your range for you to catch.");
 
 	// Changes the player's catch to be on cooldown
 	playerCooldownCatch[client] = 5.0;
@@ -1331,9 +1317,6 @@ public void ResetCooldowns()
 
 		// Resets the cooldown of the player's catch
 		playerCooldownCatch[client] = 0.0;
-
-		// Sets the client's ball caught status false
-		playerHasCaughtBall[client] = false;
 	}
 }
 
@@ -1486,9 +1469,6 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 		{
 			// Changes the player's catch to be off cooldown
 			playerCooldownCatch[client] = 0.0;
-
-			// Sets the client's ball caught status false
-			playerHasCaughtBall[client] = false;
 
 			// Modifies the contents stored within the hudMessage variable
 			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
