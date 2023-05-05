@@ -217,6 +217,15 @@ public Action Hook_OnTakeDamage(int client, int &attacker, int &inflictor, float
 		return Plugin_Continue;
 	}
 
+	// If the decoy inflictor's has bounced already then execute this section
+	if(decoyHasBounced[inflictor])
+	{
+		// Changes the amount of damage to 0.0
+		damage = 0.0;
+
+		return Plugin_Changed;
+	}
+
 	// Creates a variable to store our data within
 	char nameOfClient[64];
 
