@@ -178,7 +178,6 @@ public Action Hook_WeaponCanUse(int client, int weapon)
 }
 
 
-
 // This happens when the player takes damage
 public Action Hook_OnTakeDamage(int client, int &attacker, int &inflictor, float &damage, int &damagetype) 
 {
@@ -515,17 +514,37 @@ public void inflictDamageCatch(int client, int entity, int attacker)
 
 		// Sends a message to the client in the chat area
 		PrintToChat(client, "You killed player %s by catching their ball.", nameOfAttacker);
+
+		// If the sound is not already precached then execute this section
+		if(!IsSoundPrecached("music/nemesis.wav"))
+		{	
+			// Precaches the sound file
+			PrecacheSound("music/nemesis.wav", true);
+		}
+
+		// Emits a sound to the specified attacker that only they can hear
+		EmitSoundToClient(attacker, "music/nemesis.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 	}
 
 	// If the client is not alive then execute this section
 	else
 	{
-		// Sends a message to the attacker in the chat area
+		// Sends a message to the client in the chat area
 		PrintToChat(attacker, "%s caught your ball, but you were already dead.", nameOfClient);
 
 		// Sends a message to the client in the chat area
 		PrintToChat(client, "You Caught player %s's ball but they were already dead.", nameOfAttacker);
 	}
+
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_catch.wav"))
+	{	
+		// Precaches the sound file
+		PrecacheSound("manifest/dodgeball_extreme/sfx_catch.wav", true);
+	}
+
+	// Emits a sound to the specified client that only they can hear
+	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_catch.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
 	// Changes the player's catch to be on cooldown
 	playerCooldownCatch[client] = 5.0;
