@@ -87,7 +87,6 @@ public void OnPluginStart()
 }
 
 
-
 // This happens when a new map is loaded
 public void OnMapStart()
 {
@@ -224,7 +223,6 @@ public Action Hook_OnTakeDamage(int client, int &attacker, int &inflictor, float
 
 	return Plugin_Changed;
 }
-
 
 
 // This happens when a new entity is created
@@ -464,19 +462,39 @@ public void inflictDamageCatch(int client, int entity, int attacker)
 	// Sets the decoy entity's bounce status to true
 	decoyHasBounced[entity] = true;
 
-	// If the client is alive then execute this section
-	if(IsPlayerAlive(client))
+	// Creates a variable to store our data within
+	char nameOfClient[64];
+
+	// Creates a variable to store our data within
+	char nameOfAttacker[64];
+
+	// Obtains the name of the client and store it within the nameOfClient variable
+	GetClientName(client, nameOfClient, sizeof(nameOfClient));
+
+	// Obtains the name of the attacker and store it within the nameOfAttacker variable
+	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
+
+	// If the attacker is alive then execute this section
+	if(IsPlayerAlive(attacker))
 	{
 		// Applies 500 club damage to the attacker from the client with a decoy grenade entity
 		SDKHooks_TakeDamage(attacker, entity, client, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
 
-		PrintToChatAll("Debug - Caught the dodgeball and killed enemy");
+		// Sends a message to the attacker in the chat area
+		PrintToChat(attacker, "You died because %s caught your ball.", nameOfClient);
+
+		// Sends a message to the client in the chat area
+		PrintToChat(client, "You killed player %s by catching their ball.", nameOfAttacker);
 	}
 
 	// If the client is not alive then execute this section
 	else
 	{
-		PrintToChatAll("Debug - Caught the dodgeball but the owner is dead already");
+		// Sends a message to the attacker in the chat area
+		PrintToChat(attacker, "%s caught your ball, but you were already dead.", nameOfClient);
+
+		// Sends a message to the client in the chat area
+		PrintToChat(client, "You Caught player %s's ball but they were already dead.", nameOfAttacker);
 	}
 
 	// Sets the client's ball caught status true
@@ -674,7 +692,7 @@ public Action CommandListener_Inspect(int client, const char[] command, int argc
 		}
 	}
 
-	PrintToChat(client, "Debug - You did not manage to catch a ball");
+	PrintToChat(client, "Debug - No active balls were in range for you to catch");
 
 	// Changes the player's catch to be on cooldown
 	playerCooldownCatch[client] = 5.0;
@@ -1415,12 +1433,12 @@ public Action Timer_CleanFloor(Handle timer)
 // This happens once every 0.1 seconds and updates the player's cooldown HUD element
 public Action Timer_PlayerCooldownHud(Handle timer)
 {
-	// Resets the contents of the hudMessage variable
-	hudMessage = "";
-
 	// Loops through all of the clients
 	for (int client = 1; client <= MaxClients; client++)
 	{
+		// Resets the contents of the hudMessage variable
+		hudMessage = "";
+
 		// If the client does not meet our validation criteria then execute this section
 		if(!IsValidClient(client))
 		{
