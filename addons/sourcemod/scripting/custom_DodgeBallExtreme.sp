@@ -35,6 +35,7 @@ public Plugin myinfo =
 
 // Global Booleans
 bool isPlayerDucking[MAXPLAYERS + 1] = {false,...};
+bool isPlayerAlreadyStruck[MAXPLAYERS + 1] = {false,...};
 bool isPlayerRecentlyConnected[MAXPLAYERS + 1] = {false,...};
 bool decoyHasBounced[2049] = {false,...};
 bool isPlayerFeaturesAvailable = true;
@@ -217,8 +218,39 @@ public Action Hook_OnTakeDamage(int client, int &attacker, int &inflictor, float
 		return Plugin_Continue;
 	}
 
-	// Changes the amount of damage to zero
-	damage = 0.0;
+	// Creates a variable to store our data within
+	char nameOfClient[64];
+
+	// Creates a variable to store our data within
+	char nameOfAttacker[64];
+
+	// Obtains the name of the client and store it within the nameOfClient variable
+	GetClientName(client, nameOfClient, sizeof(nameOfClient));
+
+	// Obtains the name of the attacker and store it within the nameOfAttacker variable
+	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
+
+	// Sends a message to the client in the chat area
+	PrintToChat(client, "You were struck and killed by %s's dodgeball.", nameOfAttacker);
+
+	// Sends a message to the attacker in the chat area
+	PrintToChat(attacker, "Your dodgeball struck and killed %s.", nameOfClient);
+
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav"))
+	{	
+		// Precaches the sound file
+		PrecacheSound("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", true);
+	}
+
+	// Emits a sound to the specified client that only they can hear
+	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+
+	// Sets the client's struck status true
+	isPlayerAlreadyStruck[client] = true;
+
+	// Changes the amount of damage to 500.0
+	damage = 500.0;
 
 	return Plugin_Changed;
 }
@@ -425,7 +457,6 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		// Changes the client's movement speed back to normal after a short time
 		CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
 	}
-
 
 	if(buttons & IN_DUCK)
 	{
@@ -750,6 +781,12 @@ public void OnGameFrame()
 				continue;
 			}
 
+			// If the client's struck status is true then execute this section
+			if(isPlayerAlreadyStruck[client])
+			{
+				continue;
+			}
+
 			// Creates a variable which we will use to store data within
 			float entityVelocity[3];
 
@@ -759,7 +796,7 @@ public void OnGameFrame()
 			// If the velocity is currently 0.0 then execute this section
 			if(GetVectorLength(entityVelocity) == 0.0)
 			{
-				return;
+				continue;
 			}
 
 			// Creates a variable which we will use to store data within
@@ -929,6 +966,12 @@ public void Hook_DecoyStartTouch(int entity, int other)
 		return;
 	}
 
+	// If the client's struck status is true then execute this section
+	if(isPlayerAlreadyStruck[other])
+	{
+		return;
+	}
+
 	// obtains the index of the player that threw the grenade and store it within the attacker variable
 	int attacker = GetEntPropEnt(entity, Prop_Send, "m_hThrower");
 
@@ -1005,6 +1048,9 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 	{
 		return;
 	}
+
+	// Sets the client's struck status false
+	isPlayerAlreadyStruck[client] = false;
 
 	// Removes all the weapons from the client
 	RemoveAllWeapons(client);
