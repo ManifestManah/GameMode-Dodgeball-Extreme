@@ -462,6 +462,13 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		// Emits a sound to the specified client that only they can hear
 		EmitSoundToClient(client, soundFilePath, SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
+		AttachVisualParticleEffects(client, 10.0);
+		AttachVisualParticleEffects(client, 16.0);
+		AttachVisualParticleEffects(client, 22.0);
+		AttachVisualParticleEffects(client, 28.0);
+		AttachVisualParticleEffects(client, 34.0);
+		AttachVisualParticleEffects(client, 40.0);
+
 		// Changes the client's movement speed back to normal after a short time
 		CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
 	}
@@ -1455,10 +1462,70 @@ public void CreateGrenadeTrail(int client, int entity, int red, int green, int b
 }
 
 
+// This happens when a player uses their dash
+public void AttachVisualParticleEffects(int client, float height)
+{
+	// Creates a particle system and store it within our entity variable
+	int entity = CreateEntityByName("info_particle_system");
+
+	// If the entity does not meet our criteria of validation then execute this section
+	if(!IsValidEntity(entity))
+	{
+		return;
+	}
+
+	// Creates a variable which we will use to store data within
+	float playerLocation[3];
+
+	// Obtains the player's location and store it within our playerLocation variable
+	GetEntPropVector(client, Prop_Data, "m_vecAbsOrigin", playerLocation);
+
+	// Modifies the player's location on the z-axis by the amount specified by our height variable
+	playerLocation[2] += height;
+
+	// If the client is on the terrorist team then execute this section
+	if(GetClientTeam(client) == 2)
+	{
+		// Sets the name of the particle system we want to use
+		DispatchKeyValue(entity, "effect_name", "Manifest_Dash_Trail_T");
+	}
+
+	// If the client is on the counter-terrorist team then execute this section
+	else if(GetClientTeam(client) == 3)
+	{
+		// Sets the name of the particle system we want to use
+		DispatchKeyValue(entity, "effect_name", "Manifest_Dash_Trail_CT");
+	}
+	
+	// Spawns the entity
+	DispatchSpawn(entity);
+
+	// Activates our entity
+	ActivateEntity(entity);
+	
+	// Starts our particle entity system
+	AcceptEntityInput(entity, "Start");
+
+	// Moves the particle system to the player's location
+	TeleportEntity(entity, playerLocation, NULL_VECTOR, NULL_VECTOR);
+
+	// Changes the variantstring to activator
+	SetVariantString("!activator");
+
+	// Sets the client to be the parent of the entity
+	AcceptEntityInput(entity, "SetParent", client, entity, 0);
+
+	// Removes the particle effect from the game after 0.5 seconds
+	CreateTimer(0.5, Timer_RemoveParticleEffect, entity, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+
 // This happen when the plugin is loaded and when a new map starts
 public void DownloadAndPrecacheFiles()
 {
 	// Adds the specified file to the download table
+	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser_white.vmt");
+	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser_white.vtf");
 	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vmt");
 	AddFileToDownloadsTable("materials/manifest/dodgeball_extreme/laser.vtf");
 	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_catch.wav");
@@ -1466,11 +1533,13 @@ public void DownloadAndPrecacheFiles()
 	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_dash2.wav");
 	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_dodgeball_impact.wav");
 	AddFileToDownloadsTable("sound/manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav");
+	AddFileToDownloadsTable("particles/manifest/dodgeball_extreme/dodgeball_extreme.pcf");
 
 	// Precaches the specified model / texture
 	effectSpriteSheet = PrecacheModel("manifest/dodgeball_extreme/laser.vmt");
 
 	// Precaches the specified sound
+	PrecacheGeneric("particles/manifest/dodgeball_extreme/dodgeball_extreme.pcf", true);
 	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_catch.wav", true);
 	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dash1.wav", true);
 	PrecacheSound("sound/manifest/dodgeball_extreme/sfx_dash2.wav", true);
@@ -1588,6 +1657,22 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 		// Displays the contents of our hudMessage variable to the client in the hint text area of the screen 
 		PrintHintText(client, hudMessage);
 	}
+
+	return Plugin_Continue;
+}
+
+
+// This happens when a player uses their dash
+public Action Timer_RemoveParticleEffect(Handle Timer, int entity)
+{
+	if(!IsValidEntity(entity))
+	{
+		return Plugin_Continue;
+	}
+
+	AcceptEntityInput(entity, "Stop");
+
+	AcceptEntityInput(entity, "Kill");
 
 	return Plugin_Continue;
 }
