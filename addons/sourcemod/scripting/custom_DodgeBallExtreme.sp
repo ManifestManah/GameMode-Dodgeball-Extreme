@@ -968,7 +968,23 @@ public void Hook_DecoyStartTouch(int entity, int other)
 	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
 	SDKHooks_TakeDamage(other, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
 
-	PrintToChat(attacker, "Physically Hit A Player");
+	// Creates a variable to store our data within
+	char nameOfClient[64];
+
+	// Creates a variable to store our data within
+	char nameOfAttacker[64];
+
+	// Obtains the name of the client and store it within the nameOfClient variable
+	GetClientName(other, nameOfClient, sizeof(nameOfClient));
+
+	// Obtains the name of the attacker and store it within the nameOfAttacker variable
+	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
+
+	// Sends a message to the client in the chat area
+	PrintToChat(other, "You were struck and killed by %s's dodgeball.", nameOfAttacker);
+
+	// Sends a message to the attacker in the chat area
+	PrintToChat(attacker, "Your dodgeball struck and killed %s.", nameOfClient);
 }
 
 
@@ -1111,13 +1127,29 @@ public void inflictdamage(int client, int entity, int attacker)
 		PrecacheSound("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", true);
 	}
 
+	// Creates a variable to store our data within
+	char nameOfClient[64];
+
+	// Creates a variable to store our data within
+	char nameOfAttacker[64];
+
+	// Obtains the name of the client and store it within the nameOfClient variable
+	GetClientName(client, nameOfClient, sizeof(nameOfClient));
+
+	// Obtains the name of the attacker and store it within the nameOfAttacker variable
+	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
+
+	// Sends a message to the client in the chat area
+	PrintToChat(client, "You were struck and killed by %s's dodgeball.", nameOfAttacker);
+
+	// Sends a message to the attacker in the chat area
+	PrintToChat(attacker, "Your dodgeball struck and killed %s.", nameOfClient);
+
 	// Emits a sound to the specified client that only they can hear
 	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
 	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
 	SDKHooks_TakeDamage(client, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
-
-	PrintToChatAll("Debug - Radius Within Range Of A Target");
 }
 
 
