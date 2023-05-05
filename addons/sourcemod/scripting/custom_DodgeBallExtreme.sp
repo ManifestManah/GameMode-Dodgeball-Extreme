@@ -1060,6 +1060,9 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 
 	// Creates and sends a menu with introduction information to the client
 	IntroductionMenu(client);
+
+	// Disables CS:GO's built-in minimap / radar hud element
+	CreateTimer(0.0, Timer_HideMinimap, client, TIMER_FLAG_NO_MAPCHANGE);
 }
 
 
@@ -1125,7 +1128,6 @@ public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroad
 
 		// Emits a sound to the specified client that only they can hear
 		EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
-
 	}
 
 	// Enables the usage of dash and catch
@@ -1555,6 +1557,28 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 		// Displays the contents of our hudMessage variable to the client in the hint text area of the screen 
 		PrintHintText(client, hudMessage);
 	}
+
+	return Plugin_Continue;
+}
+
+
+// This happens when a player spawns
+public Action Timer_HideMinimap(Handle timer, int client) 
+{
+	// If the client does not meet our validation criteria then execute this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the player is anything but a bot then execute this section
+	if(IsFakeClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	//Disables CS:GO's built-in minimap / radar hud element
+	SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") | 4096);
 
 	return Plugin_Continue;
 }
