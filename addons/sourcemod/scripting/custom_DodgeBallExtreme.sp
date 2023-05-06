@@ -36,6 +36,7 @@ ConVar cvar_GrenadeTrailsTeamColors;
 ConVar cvar_GrenadeTeamColors;
 ConVar cvar_FirstDodgeBall;
 ConVar cvar_DodgeballRecoveryTime;
+ConVar cvar_DisableMiniMap;
 
 
 //////////////////////////
@@ -1075,8 +1076,12 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 	// Gives the client a decoy grenade after 0.1 seconds
 	CreateTimer(0.1, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
 
-	// Disables CS:GO's built-in minimap / radar hud element
-	CreateTimer(0.0, Timer_HideMinimap, client, TIMER_FLAG_NO_MAPCHANGE);
+	// If the value of cvar_DisableMiniMap is set to true then execute this section
+	if(GetConVarBool(cvar_DisableMiniMap))
+	{
+		// Disables CS:GO's built-in minimap / radar hud element
+		CreateTimer(0.0, Timer_HideMinimap, client, TIMER_FLAG_NO_MAPCHANGE);
+	}
 }
 
 
@@ -1194,6 +1199,7 @@ public void CreateModSpecificConvars()
 	cvar_GrenadeTeamColors =			CreateConVar("DBE_GrenadeTeamColors", 			"1",	 	"Should the dodgeballs be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
 	cvar_FirstDodgeBall =				CreateConVar("DBE_FirstDodgeBall", 				"1.0",	 	"How many seconds after the freeze time expires should the players receive their first dodgeball? - [Default = 1.0]");
 	cvar_DodgeballRecoveryTime =		CreateConVar("DBE_DodgeballRecoveryTime", 		"0.8",	 	"How long time, in seconds, should it take before a player receives a new ball after having thrown their previous one? - [Default = 0.8]");
+	cvar_DisableMiniMap =				CreateConVar("DBE_DisableMiniMap", 				"1",	 	"Should the players' minimap / radar be disabled? - [Default = 1]");
 
 	// Automatically generates a config file that contains our variables
 	AutoExecConfig(true, "dodgeball_convars", "sourcemod/dodgeball_extreme");
