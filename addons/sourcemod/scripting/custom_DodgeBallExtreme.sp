@@ -25,7 +25,7 @@ public Plugin myinfo =
 // - Convars - //
 /////////////////
 
-
+ConVar cvar_CooldownCatchTime;
 
 
 //////////////////////////
@@ -58,6 +58,9 @@ char hudMessage[1024];
 // This happens when the plugin is loaded
 public void OnPluginStart()
 {
+	// Creates the names and assigns values to the ConVars the modification will be using 
+	CreateModSpecificConvars();
+
 	// Hooks the events that we intend to use in our plugin
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
@@ -669,7 +672,7 @@ public Action CommandListener_Inspect(int client, const char[] command, int argc
 	PrintToChat(client, "There were no active ball within your range for you to catch.");
 
 	// Changes the player's catch to be on cooldown
-	playerCooldownCatch[client] = 5.0;
+	playerCooldownCatch[client] = GetConVarFloat(cvar_CooldownCatchTime);
 
 	return Plugin_Continue;
 }
@@ -1095,6 +1098,21 @@ public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroad
 
 
 // This happens when the plugin is loaded
+public void CreateModSpecificConvars()
+{
+	///////////////////////////////
+	// - Configuration Convars - //
+	///////////////////////////////
+
+	cvar_CooldownCatchTime = 			CreateConVar("DBE_CatchCooldownTime", 			"5.00",	 	"How many seconds should it take before a player can attempt to catch a ball again? - [Default = 5.00]");
+
+
+	// Automatically generates a config file that contains our variables
+	AutoExecConfig(true, "dodgeball_convars", "sourcemod/dodgeball_extreme");
+}
+
+
+// This happens when the plugin is loaded
 public void LateLoadSupport()
 {
 	// Loops through all of the clients
@@ -1506,7 +1524,7 @@ public void inflictDamageCatch(int client, int entity, int attacker)
 	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_catch.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
 	// Changes the player's catch to be on cooldown
-	playerCooldownCatch[client] = 5.0;
+	playerCooldownCatch[client] = GetConVarFloat(cvar_CooldownCatchTime);
 
 	// If the entity does not meet the criteria of validation then execute this section
 	if(!IsValidEntity(entity))
