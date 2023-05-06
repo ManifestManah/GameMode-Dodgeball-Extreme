@@ -28,6 +28,7 @@ public Plugin myinfo =
 ConVar cvar_CooldownCatchTime;
 ConVar cvar_CooldownDashTime;
 ConVar cvar_GrenadeTrails;
+ConVar cvar_GrenadeTrailsTeamColors;
 
 
 
@@ -328,18 +329,29 @@ public Action Hook_DecoySpawnPost(int entity)
 	// If the value of cvar_GrenadeTrails is set to true then execute this section
 	if(GetConVarBool(cvar_GrenadeTrails))
 	{
-		// If the client is on the terrorist team then execute this section
-		if(GetClientTeam(client) == 2)
+		// If the value of cvar_GrenadeTrailsTeamColors is set to true then execute this section
+		if(GetConVarBool(cvar_GrenadeTrailsTeamColors))
 		{
-			// Creates a colored beam trail effect and attaches it to the decoy entity
-			CreateGrenadeTrail(client, entity, 160, 0, 0, 210);
+			// If the client is on the terrorist team then execute this section
+			if(GetClientTeam(client) == 2)
+			{
+				// Creates a colored beam trail effect and attaches it to the decoy entity
+				CreateGrenadeTrail(client, entity, 160, 0, 0, 210);
+			}
+
+			// If the client is on the counter-terrorist team then execute this section
+			else if(GetClientTeam(client) == 3)
+			{
+				// Creates a colored beam trail effect and attaches it to the decoy entity
+				CreateGrenadeTrail(client, entity, 0, 0, 180, 210);
+			}
 		}
 
-		// If the client is on the counter-terrorist team then execute this section
-		else if(GetClientTeam(client) == 3)
+		// If the value of cvar_GrenadeTrailsTeamColors is set to true then execute this section
+		else
 		{
 			// Creates a colored beam trail effect and attaches it to the decoy entity
-			CreateGrenadeTrail(client, entity, 0, 0, 180, 210);
+			CreateGrenadeTrail(client, entity, 223, 223, 223, 210);
 		}
 	}
 
@@ -1124,6 +1136,9 @@ public void CreateModSpecificConvars()
 	cvar_CooldownCatchTime = 			CreateConVar("DBE_CatchCooldownTime", 			"5.00",	 	"How many seconds should it take before a player can attempt to catch a ball again? - [Default = 5.00]");
 	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 	cvar_GrenadeTrails =				CreateConVar("DBE_GrenadeTrails", 				"1",	 	"Should thrown dodgeballs have a trail attached to them? - [Default = 1]");
+	cvar_GrenadeTrailsTeamColors =		CreateConVar("DBE_GrenadeTrailsTeamColors", 	"1",	 	"Should the trails be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
+
+
 
 
 	// Automatically generates a config file that contains our variables
