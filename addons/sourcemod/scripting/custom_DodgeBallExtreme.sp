@@ -1076,6 +1076,9 @@ public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroad
 			continue;
 		}
 
+		// Gives the client a decoy grenade after 0.1 seconds
+		CreateTimer(0.1, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+
 		// If the sound is not already precached then execute this section
 		if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav"))
 		{	
@@ -1188,6 +1191,12 @@ public void RemoveAllWeapons(int client)
 // This happens when a player spawns
 public void GiveDecoyGrenade(int client)
 {
+	// If the client's dash is blocked then execute this section
+	if(!isPlayerFeaturesAvailable)
+	{
+		return;
+	}
+
 	// Gives the client the specified weapon
 	GivePlayerItem(client, "weapon_decoy");
 
