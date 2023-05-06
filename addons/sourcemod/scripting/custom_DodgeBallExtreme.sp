@@ -26,6 +26,7 @@ public Plugin myinfo =
 /////////////////
 
 ConVar cvar_CooldownCatchTime;
+ConVar cvar_CooldownDashTime;
 
 
 //////////////////////////
@@ -430,7 +431,7 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		}
 
 		// Changes the player's dash to be on cooldown
-		playerCooldownDash[client] = 8.0;
+		playerCooldownDash[client] = GetConVarFloat(cvar_CooldownDashTime);
 
 		// Changes the client's movement speed to a high value
 		SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 3.25);
@@ -1105,6 +1106,7 @@ public void CreateModSpecificConvars()
 	///////////////////////////////
 
 	cvar_CooldownCatchTime = 			CreateConVar("DBE_CatchCooldownTime", 			"5.00",	 	"How many seconds should it take before a player can attempt to catch a ball again? - [Default = 5.00]");
+	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 
 
 	// Automatically generates a config file that contains our variables
