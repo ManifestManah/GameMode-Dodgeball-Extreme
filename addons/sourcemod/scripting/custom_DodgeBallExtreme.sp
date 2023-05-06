@@ -29,6 +29,7 @@ ConVar cvar_CooldownCatchTime;
 ConVar cvar_CooldownDashTime;
 ConVar cvar_GrenadeTrails;
 ConVar cvar_GrenadeTrailsTeamColors;
+ConVar cvar_GrenadeTeamColors;
 
 
 
@@ -355,19 +356,23 @@ public Action Hook_DecoySpawnPost(int entity)
 		}
 	}
 
-	// If the client is on the terrorist team then execute this section
-	if(GetClientTeam(client) == 2)
+	// If the value of cvar_GrenadeTeamColors is set to true then execute this section
+	if(GetConVarBool(cvar_GrenadeTeamColors))
 	{
-		// Changes the color of the entity to the specified RGB color
-		DispatchKeyValue(entity, "rendercolor", "160 0 0");
+		// If the client is on the terrorist team then execute this section
+		if(GetClientTeam(client) == 2)
+		{
+			// Changes the color of the entity to the specified RGB color
+			DispatchKeyValue(entity, "rendercolor", "160 0 0");
 
-	}
+		}
 
-	// If the client is on the counter-terrorist team then execute this section
-	else if(GetClientTeam(client) == 3)
-	{
-		// Changes the color of the entity to the specified RGB color
-		DispatchKeyValue(entity, "rendercolor", "0 0 180");
+		// If the client is on the counter-terrorist team then execute this section
+		else if(GetClientTeam(client) == 3)
+		{
+			// Changes the color of the entity to the specified RGB color
+			DispatchKeyValue(entity, "rendercolor", "0 0 180");
+		}
 	}
 
 	// Adds a hook to our grenade entity to notify of us when the grenade will touch something
@@ -1137,6 +1142,7 @@ public void CreateModSpecificConvars()
 	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 	cvar_GrenadeTrails =				CreateConVar("DBE_GrenadeTrails", 				"1",	 	"Should thrown dodgeballs have a trail attached to them? - [Default = 1]");
 	cvar_GrenadeTrailsTeamColors =		CreateConVar("DBE_GrenadeTrailsTeamColors", 	"1",	 	"Should the trails be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
+	cvar_GrenadeTeamColors =			CreateConVar("DBE_GrenadeTeamColors", 			"1",	 	"Should the dodgeballs be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
 
 
 
