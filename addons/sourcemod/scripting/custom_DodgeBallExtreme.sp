@@ -1069,11 +1069,11 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 	// Removes all the weapons from the client
 	RemoveAllWeapons(client);
 
-	// Gives the client a decoy grenade
-	GiveDecoyGrenade(client);
-
 	// Creates and sends a menu with introduction information to the client
 	IntroductionMenu(client);
+
+	// Gives the client a decoy grenade after 0.1 seconds
+	CreateTimer(0.1, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
 
 	// Disables CS:GO's built-in minimap / radar hud element
 	CreateTimer(0.0, Timer_HideMinimap, client, TIMER_FLAG_NO_MAPCHANGE);
@@ -1294,6 +1294,13 @@ public void GiveDecoyGrenade(int client)
 	if(!isPlayerFeaturesAvailable)
 	{
 		return;
+	}
+
+	// If the client has 1 decoy then execute this section
+	if(GetEntProp(client, Prop_Send, "m_iAmmo", _, 18) == 1)
+	{
+		// Removes all the weapons from the client
+		RemoveAllWeapons(client);
 	}
 
 	// Gives the client the specified weapon
