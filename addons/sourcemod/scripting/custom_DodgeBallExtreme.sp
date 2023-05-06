@@ -28,6 +28,7 @@ public Plugin myinfo =
 ConVar cvar_FeatureCatch;
 ConVar cvar_CooldownCatchTime;
 ConVar cvar_FeatureDash;
+ConVar cvar_DashEffects;
 ConVar cvar_CooldownDashTime;
 ConVar cvar_GrenadeTrails;
 ConVar cvar_GrenadeTrailsTeamColors;
@@ -509,12 +510,16 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 			// Emits a sound to the specified client that only they can hear
 			EmitSoundToClient(client, soundFilePath, SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
-			AttachVisualParticleEffects(client, 10.0);
-			AttachVisualParticleEffects(client, 16.0);
-			AttachVisualParticleEffects(client, 22.0);
-			AttachVisualParticleEffects(client, 28.0);
-			AttachVisualParticleEffects(client, 34.0);
-			AttachVisualParticleEffects(client, 40.0);
+			// If the value of cvar_DashEffects is set to true then execute this section
+			if(GetConVarBool(cvar_DashEffects))
+			{
+				AttachVisualParticleEffects(client, 10.0);
+				AttachVisualParticleEffects(client, 16.0);
+				AttachVisualParticleEffects(client, 22.0);
+				AttachVisualParticleEffects(client, 28.0);
+				AttachVisualParticleEffects(client, 34.0);
+				AttachVisualParticleEffects(client, 40.0);
+			}
 
 			// Changes the client's movement speed back to normal after a short time
 			CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
@@ -1153,9 +1158,10 @@ public void CreateModSpecificConvars()
 	///////////////////////////////
 
 	cvar_FeatureDash =					CreateConVar("DBE_DashFeature", 				"1",	 	"Should players be able to press [E] to dash and gain a brief movement speed boost? - [Default = 1]");
+	cvar_DashEffects =					CreateConVar("DBE_DashEffects", 				"1",	 	"Should a visual effect be added to players when they use their dash? - [Default = 1]");
+	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 	cvar_FeatureCatch =					CreateConVar("DBE_CatchFeature", 				"1",	 	"Should players be able to press [F] to catch nearby dodgeballs thrown by the enemy team? - [Default = 1]");
 	cvar_CooldownCatchTime = 			CreateConVar("DBE_CatchCooldownTime", 			"5.00",	 	"How many seconds should it take before a player can attempt to catch a ball again? - [Default = 5.00]");
-	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 	cvar_GrenadeTrails =				CreateConVar("DBE_GrenadeTrails", 				"1",	 	"Should thrown dodgeballs have a trail attached to them? - [Default = 1]");
 	cvar_GrenadeTrailsTeamColors =		CreateConVar("DBE_GrenadeTrailsTeamColors", 	"1",	 	"Should the trails be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
 	cvar_GrenadeTeamColors =			CreateConVar("DBE_GrenadeTeamColors", 			"1",	 	"Should the dodgeballs be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
