@@ -27,6 +27,7 @@ public Plugin myinfo =
 
 ConVar cvar_FeatureCatch;
 ConVar cvar_CooldownCatchTime;
+ConVar cvar_FeatureDash;
 ConVar cvar_CooldownDashTime;
 ConVar cvar_GrenadeTrails;
 ConVar cvar_GrenadeTrailsTeamColors;
@@ -84,8 +85,12 @@ public void OnPluginStart()
 	// Removes any unowned weapon and item entities from the map every 2.0 seconds
 	CreateTimer(2.0, Timer_CleanFloor, _, TIMER_REPEAT);
 
-	// Creates a timer that will update the player's cooldown hud every 0.1 second
-	CreateTimer(0.1, Timer_PlayerCooldownHud, _, TIMER_REPEAT);
+	// If the value of cvar_FeatureCatch or cvar_FeatureDash is set to true then execute this section
+	if(GetConVarBool(cvar_FeatureCatch) | GetConVarBool(cvar_FeatureDash))
+	{
+		// Creates a timer that will update the player's cooldown hud every 0.1 second
+		CreateTimer(0.1, Timer_PlayerCooldownHud, _, TIMER_REPEAT);
+	}
 
 	// Allows the modification to be loaded while the server is running, without causing gameplay issues
 	LateLoadSupport();
@@ -453,63 +458,67 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		return Plugin_Continue;
 	}
 
-	// If the player is pressing their USE button then execute this section
-	if(buttons & IN_USE)
+	// If the value of cvar_FeatureDash is set to true then execute this section
+	if(GetConVarBool(cvar_FeatureDash))
 	{
-		// If the client's dash is blocked then execute this section
-		if(!isPlayerFeaturesAvailable)
+		// If the player is pressing their USE button then execute this section
+		if(buttons & IN_USE)
 		{
-			return Plugin_Continue;
+			// If the client's dash is blocked then execute this section
+			if(!isPlayerFeaturesAvailable)
+			{
+				return Plugin_Continue;
+			}
+
+			// If the player's Dash is on cooldown then execute this section
+			if(playerCooldownDash[client])
+			{
+				return Plugin_Continue;
+			}
+
+			// Changes the player's dash to be on cooldown
+			playerCooldownDash[client] = GetConVarFloat(cvar_CooldownDashTime);
+
+			// Changes the client's movement speed to a high value
+			SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 3.25);
+
+			// Creates a variable which we will use to store data within
+			char soundFilePath[64];
+
+			// If the randomly chosen number is 0 then execute this section
+			if(GetRandomInt(0, 1) == 0)
+			{
+				// Changes the contents stored within our soundFilePath variable
+				soundFilePath = "manifest/dodgeball_extreme/sfx_dash1.wav";
+			}
+
+			// If the randomly chosen number is 0 then execute this section
+			else
+			{
+				// Changes the contents stored within our soundFilePath variable
+				soundFilePath = "manifest/dodgeball_extreme/sfx_dash2.wav";
+			}
+
+			// If the sound is not already precached then execute this section
+			if(!IsSoundPrecached(soundFilePath))
+			{	
+				// Precaches the sound file
+				PrecacheSound(soundFilePath, true);
+			}
+
+			// Emits a sound to the specified client that only they can hear
+			EmitSoundToClient(client, soundFilePath, SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+
+			AttachVisualParticleEffects(client, 10.0);
+			AttachVisualParticleEffects(client, 16.0);
+			AttachVisualParticleEffects(client, 22.0);
+			AttachVisualParticleEffects(client, 28.0);
+			AttachVisualParticleEffects(client, 34.0);
+			AttachVisualParticleEffects(client, 40.0);
+
+			// Changes the client's movement speed back to normal after a short time
+			CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
 		}
-
-		// If the player's Dash is on cooldown then execute this section
-		if(playerCooldownDash[client])
-		{
-			return Plugin_Continue;
-		}
-
-		// Changes the player's dash to be on cooldown
-		playerCooldownDash[client] = GetConVarFloat(cvar_CooldownDashTime);
-
-		// Changes the client's movement speed to a high value
-		SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 3.25);
-
-		// Creates a variable which we will use to store data within
-		char soundFilePath[64];
-
-		// If the randomly chosen number is 0 then execute this section
-		if(GetRandomInt(0, 1) == 0)
-		{
-			// Changes the contents stored within our soundFilePath variable
-			soundFilePath = "manifest/dodgeball_extreme/sfx_dash1.wav";
-		}
-
-		// If the randomly chosen number is 0 then execute this section
-		else
-		{
-			// Changes the contents stored within our soundFilePath variable
-			soundFilePath = "manifest/dodgeball_extreme/sfx_dash2.wav";
-		}
-
-		// If the sound is not already precached then execute this section
-		if(!IsSoundPrecached(soundFilePath))
-		{	
-			// Precaches the sound file
-			PrecacheSound(soundFilePath, true);
-		}
-
-		// Emits a sound to the specified client that only they can hear
-		EmitSoundToClient(client, soundFilePath, SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
-
-		AttachVisualParticleEffects(client, 10.0);
-		AttachVisualParticleEffects(client, 16.0);
-		AttachVisualParticleEffects(client, 22.0);
-		AttachVisualParticleEffects(client, 28.0);
-		AttachVisualParticleEffects(client, 34.0);
-		AttachVisualParticleEffects(client, 40.0);
-
-		// Changes the client's movement speed back to normal after a short time
-		CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
 	}
 
 	if(buttons & IN_DUCK)
@@ -1143,15 +1152,13 @@ public void CreateModSpecificConvars()
 	// - Configuration Convars - //
 	///////////////////////////////
 
+	cvar_FeatureDash =					CreateConVar("DBE_DashFeature", 				"1",	 	"Should players be able to press [E] to dash and gain a brief movement speed boost? - [Default = 1]");
 	cvar_FeatureCatch =					CreateConVar("DBE_CatchFeature", 				"1",	 	"Should players be able to press [F] to catch nearby dodgeballs thrown by the enemy team? - [Default = 1]");
 	cvar_CooldownCatchTime = 			CreateConVar("DBE_CatchCooldownTime", 			"5.00",	 	"How many seconds should it take before a player can attempt to catch a ball again? - [Default = 5.00]");
 	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 	cvar_GrenadeTrails =				CreateConVar("DBE_GrenadeTrails", 				"1",	 	"Should thrown dodgeballs have a trail attached to them? - [Default = 1]");
 	cvar_GrenadeTrailsTeamColors =		CreateConVar("DBE_GrenadeTrailsTeamColors", 	"1",	 	"Should the trails be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
 	cvar_GrenadeTeamColors =			CreateConVar("DBE_GrenadeTeamColors", 			"1",	 	"Should the dodgeballs be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
-
-
-
 
 	// Automatically generates a config file that contains our variables
 	AutoExecConfig(true, "dodgeball_convars", "sourcemod/dodgeball_extreme");
@@ -1415,8 +1422,12 @@ public void ResetCooldowns()
 			continue;
 		}
 
-		// Resets the cooldown of the player's dash
-		playerCooldownDash[client] = 0.0;
+		// If the value of cvar_FeatureDash is set to true then execute this section
+		if(GetConVarBool(cvar_FeatureDash))
+		{
+			// Resets the cooldown of the player's dash
+			playerCooldownDash[client] = 0.0;
+		}
 
 		// If the value of cvar_FeatureCatch is set to true then execute this section
 		if(GetConVarBool(cvar_FeatureCatch))
@@ -1681,24 +1692,28 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 			continue;
 		}
 
-		// If the player's Dash is on cooldown then execute this section
-		if(playerCooldownDash[client] > 0.0)
+		// If the value of cvar_FeatureDash is set to true then execute this section
+		if(GetConVarBool(cvar_FeatureDash))
 		{
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
+			// If the player's Dash is on cooldown then execute this section
+			if(playerCooldownDash[client] > 0.0)
+			{
+				// Modifies the contents stored within the hudMessage variable
+				Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownDash[client]);
 
-			// Subtracts 0.1 from the current value of playerCooldownDash[client]
-			playerCooldownDash[client] -= 0.1;
-		}
+				// Subtracts 0.1 from the current value of playerCooldownDash[client]
+				playerCooldownDash[client] -= 0.1;
+			}
 
-		// If the player's Dash is not on cooldown then execute this section
-		else
-		{
-			// Changes the player's dash to be off cooldown
-			playerCooldownDash[client] = 0.0;
+			// If the player's Dash is not on cooldown then execute this section
+			else
+			{
+				// Changes the player's dash to be off cooldown
+				playerCooldownDash[client] = 0.0;
 
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
+				// Modifies the contents stored within the hudMessage variable
+				Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
+			}
 		}
 
 		// If the value of cvar_FeatureCatch is set to true then execute this section
