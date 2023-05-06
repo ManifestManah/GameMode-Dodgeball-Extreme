@@ -1079,15 +1079,8 @@ public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroad
 		// Gives the client a decoy grenade after 0.1 seconds
 		CreateTimer(0.1, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
 
-		// If the sound is not already precached then execute this section
-		if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav"))
-		{	
-			// Precaches the sound file
-			PrecacheSound("manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", true);
-		}
-
-		// Emits a sound to the specified client that only they can hear
-		EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+		// Plays the whistle blowing sound after 0.1 seconds
+		CreateTimer(0.1, Timer_BlowWhistle, client, TIMER_FLAG_NO_MAPCHANGE);
 	}
 
 	// Enables the usage of dash and catch
@@ -1720,6 +1713,29 @@ public Action Timer_GiveDecoyGrenade(Handle Timer, int client)
 
 	// Gives the client a decoy grenade
 	GiveDecoyGrenade(client);
+
+	return Plugin_Continue;
+}
+
+
+// This happens shortly after a player fires their weapon
+public Action Timer_BlowWhistle(Handle Timer, int client)
+{
+	// If the player does not meet our validation criteria then execut this section
+	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav"))
+	{	
+		// Precaches the sound file
+		PrecacheSound("manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", true);
+	}
+
+	// Emits a sound to the specified client that only they can hear
+	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_refereewhistle_blown.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 
 	return Plugin_Continue;
 }
