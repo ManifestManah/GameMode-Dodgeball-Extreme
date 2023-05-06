@@ -1666,6 +1666,30 @@ public void inflictDamageCatch(int client, int entity, int attacker)
 }
 
 
+// This happens when the plugin is loaded, unloaded and when a new round starts
+public void SendChatMessageToAll(const char[] chatMessage)
+{
+	// Loops through all of the clients
+	for (int client = 1; client <= MaxClients; client++)
+	{
+		// If the client does not meet our validation criteria then execute this section
+		if(!IsValidClient(client))
+		{
+			continue;
+		}
+
+		// If the client is a bot then execute this section
+		if(IsFakeClient(client))
+		{
+			continue;
+		}
+
+		// Sends a multi-language message to the client
+		CPrintToChat(client, "%t", chatMessage);
+	}
+}
+
+
 // This happen when the plugin is loaded and when a new map starts
 public void DownloadAndPrecacheFiles()
 {
