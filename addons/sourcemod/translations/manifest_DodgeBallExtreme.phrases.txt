@@ -19,7 +19,7 @@
 	"Chat - You Hit An Enemy"
 	{
 		"#format" 		"{1:s}"
-		"en"			"{green}[Dodgeball Extreme]:{default} Your dodgeball struck and killed {lightgreen} {1}{default}."
+		"en"			"{green}[Dodgeball Extreme]:{default} Your dodgeball struck and killed{lightgreen} {1}{default}."
 	}
 
 	"Chat - Your Ball Was Caught"
@@ -48,6 +48,6 @@
 
 	"Chat - Catch No Nearby Dodgeballs"
 	{
-		"en"			"{green}[Dodgeball Extreme]:{default} there were{lightgreen} active balls{default} within range for you to catch."
+		"en"			"{green}[Dodgeball Extreme]:{default} there were{lightgreen} zero active balls{default} within range for you to catch."
 	}
 }
