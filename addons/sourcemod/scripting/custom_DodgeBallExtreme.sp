@@ -37,6 +37,7 @@ ConVar cvar_GrenadeTeamColors;
 ConVar cvar_FirstDodgeBall;
 ConVar cvar_DodgeballRecoveryTime;
 ConVar cvar_DisableMiniMap;
+ConVar cvar_IntroductionMenu;
 
 
 //////////////////////////
@@ -1070,8 +1071,12 @@ public void Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcas
 	// Removes all the weapons from the client
 	RemoveAllWeapons(client);
 
-	// Creates and sends a menu with introduction information to the client
-	IntroductionMenu(client);
+	// If the value of cvar_IntroductionMenu is set to true then execute this section
+	if(GetConVarBool(cvar_IntroductionMenu))
+	{
+		// Creates and sends a menu with introduction information to the client
+		IntroductionMenu(client);
+	}
 
 	// Gives the client a decoy grenade after 0.1 seconds
 	CreateTimer(0.1, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
@@ -1200,6 +1205,7 @@ public void CreateModSpecificConvars()
 	cvar_FirstDodgeBall =				CreateConVar("DBE_FirstDodgeBall", 				"1.0",	 	"How many seconds after the freeze time expires should the players receive their first dodgeball? - [Default = 1.0]");
 	cvar_DodgeballRecoveryTime =		CreateConVar("DBE_DodgeballRecoveryTime", 		"0.8",	 	"How long time, in seconds, should it take before a player receives a new ball after having thrown their previous one? - [Default = 0.8]");
 	cvar_DisableMiniMap =				CreateConVar("DBE_DisableMiniMap", 				"1",	 	"Should the players' minimap / radar be disabled? - [Default = 1]");
+	cvar_IntroductionMenu =				CreateConVar("DBE_IntroductionMenu", 			"1",	 	"Should players be shown an introduction menu, explaining how to play the game mode when joining the server? (This is recommended) - [Default = 1]");
 
 	// Automatically generates a config file that contains our variables
 	AutoExecConfig(true, "dodgeball_convars", "sourcemod/dodgeball_extreme");
