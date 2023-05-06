@@ -21,7 +21,6 @@ public Plugin myinfo =
 
 
 
-
 /////////////////
 // - Convars - //
 /////////////////
@@ -61,8 +60,6 @@ public void OnPluginStart()
 {
 	// Hooks the events that we intend to use in our plugin
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
-//	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
-
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
 	HookEvent("round_freeze_end", Event_RoundFreezeEnd, EventHookMode_Post);
 	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
@@ -498,81 +495,6 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 	}
 
 	return Plugin_Continue;
-}
-
-
-// This happens every frame / tick if a player is within range of an enemy's active dodgeball 
-public void inflictDamageCatch(int client, int entity, int attacker)
-{
-	// Sets the decoy entity's bounce status to true
-	decoyHasBounced[entity] = true;
-
-	// Creates a variable to store our data within
-	char nameOfClient[64];
-
-	// Creates a variable to store our data within
-	char nameOfAttacker[64];
-
-	// Obtains the name of the client and store it within the nameOfClient variable
-	GetClientName(client, nameOfClient, sizeof(nameOfClient));
-
-	// Obtains the name of the attacker and store it within the nameOfAttacker variable
-	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
-
-	// If the attacker is alive then execute this section
-	if(IsPlayerAlive(attacker))
-	{
-		// Applies 500 club damage to the attacker from the client with a decoy grenade entity
-		SDKHooks_TakeDamage(attacker, entity, client, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
-
-		// Sends a message to the attacker in the chat area
-		PrintToChat(attacker, "You died because %s caught your ball.", nameOfClient);
-
-		// Sends a message to the client in the chat area
-		PrintToChat(client, "You killed player %s by catching their ball.", nameOfAttacker);
-
-		// If the sound is not already precached then execute this section
-		if(!IsSoundPrecached("music/nemesis.wav"))
-		{	
-			// Precaches the sound file
-			PrecacheSound("music/nemesis.wav", true);
-		}
-
-		// Emits a sound to the specified attacker that only they can hear
-		EmitSoundToClient(attacker, "music/nemesis.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
-	}
-
-	// If the client is not alive then execute this section
-	else
-	{
-		// Sends a message to the client in the chat area
-		PrintToChat(attacker, "%s caught your ball, but you were already dead.", nameOfClient);
-
-		// Sends a message to the client in the chat area
-		PrintToChat(client, "You Caught player %s's ball but they were already dead.", nameOfAttacker);
-	}
-
-	// If the sound is not already precached then execute this section
-	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_catch.wav"))
-	{	
-		// Precaches the sound file
-		PrecacheSound("manifest/dodgeball_extreme/sfx_catch.wav", true);
-	}
-
-	// Emits a sound to the specified client that only they can hear
-	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_catch.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
-
-	// Changes the player's catch to be on cooldown
-	playerCooldownCatch[client] = 5.0;
-
-	// If the entity does not meet the criteria of validation then execute this section
-	if(!IsValidEntity(entity))
-	{
-		return;
-	}
-
-	// Kills the entity, removing it from the game
-	AcceptEntityInput(entity, "Kill");
 }
 
 
@@ -1520,6 +1442,81 @@ public void AttachVisualParticleEffects(int client, float height)
 }
 
 
+// This happens every frame / tick if a player is within range of an enemy's active dodgeball 
+public void inflictDamageCatch(int client, int entity, int attacker)
+{
+	// Sets the decoy entity's bounce status to true
+	decoyHasBounced[entity] = true;
+
+	// Creates a variable to store our data within
+	char nameOfClient[64];
+
+	// Creates a variable to store our data within
+	char nameOfAttacker[64];
+
+	// Obtains the name of the client and store it within the nameOfClient variable
+	GetClientName(client, nameOfClient, sizeof(nameOfClient));
+
+	// Obtains the name of the attacker and store it within the nameOfAttacker variable
+	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
+
+	// If the attacker is alive then execute this section
+	if(IsPlayerAlive(attacker))
+	{
+		// Applies 500 club damage to the attacker from the client with a decoy grenade entity
+		SDKHooks_TakeDamage(attacker, entity, client, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
+
+		// Sends a message to the attacker in the chat area
+		PrintToChat(attacker, "You died because %s caught your ball.", nameOfClient);
+
+		// Sends a message to the client in the chat area
+		PrintToChat(client, "You killed player %s by catching their ball.", nameOfAttacker);
+
+		// If the sound is not already precached then execute this section
+		if(!IsSoundPrecached("music/nemesis.wav"))
+		{	
+			// Precaches the sound file
+			PrecacheSound("music/nemesis.wav", true);
+		}
+
+		// Emits a sound to the specified attacker that only they can hear
+		EmitSoundToClient(attacker, "music/nemesis.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+	}
+
+	// If the client is not alive then execute this section
+	else
+	{
+		// Sends a message to the client in the chat area
+		PrintToChat(attacker, "%s caught your ball, but you were already dead.", nameOfClient);
+
+		// Sends a message to the client in the chat area
+		PrintToChat(client, "You Caught player %s's ball but they were already dead.", nameOfAttacker);
+	}
+
+	// If the sound is not already precached then execute this section
+	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_catch.wav"))
+	{	
+		// Precaches the sound file
+		PrecacheSound("manifest/dodgeball_extreme/sfx_catch.wav", true);
+	}
+
+	// Emits a sound to the specified client that only they can hear
+	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_catch.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
+
+	// Changes the player's catch to be on cooldown
+	playerCooldownCatch[client] = 5.0;
+
+	// If the entity does not meet the criteria of validation then execute this section
+	if(!IsValidEntity(entity))
+	{
+		return;
+	}
+
+	// Kills the entity, removing it from the game
+	AcceptEntityInput(entity, "Kill");
+}
+
+
 // This happen when the plugin is loaded and when a new map starts
 public void DownloadAndPrecacheFiles()
 {
@@ -1665,13 +1662,16 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 // This happens when a player uses their dash
 public Action Timer_RemoveParticleEffect(Handle Timer, int entity)
 {
+	// If the entity does not meet our criteria validation then execute this section
 	if(!IsValidEntity(entity))
 	{
 		return Plugin_Continue;
 	}
 
+	// Stops the entity from being active
 	AcceptEntityInput(entity, "Stop");
 
+	// Kills the entity, removing it from the game
 	AcceptEntityInput(entity, "Kill");
 
 	return Plugin_Continue;
@@ -1773,7 +1773,7 @@ public Action Timer_ResetPlayerSpeed(Handle Timer, int client)
 // Returns true if the client meets the validation criteria. elsewise returns false
 public bool IsValidClient(int client)
 {
-	if (!(1 <= client <= MaxClients) || !IsClientConnected(client) || !IsClientInGame(client) || IsClientSourceTV(client) || IsClientReplay(client))
+	if(!(1 <= client <= MaxClients) || !IsClientConnected(client) || !IsClientInGame(client) || IsClientSourceTV(client) || IsClientReplay(client))
 	{
 		return false;
 	}
