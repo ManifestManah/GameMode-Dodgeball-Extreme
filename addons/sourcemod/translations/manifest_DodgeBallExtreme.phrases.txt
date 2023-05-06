@@ -1,0 +1,53 @@
+"Phrases"
+{
+	"Chat - Mod Loaded"
+	{
+		"en"			"{green}[Dodgeball Extreme]:{default} The modification has been{lightgreen} loaded{default}."
+	}
+
+	"Chat - Mod Unloaded"
+	{
+		"en"			"{green}[Dodgeball Extreme]:{default} The modification has been{lightgreen} unloaded{default}."
+	}
+
+	"Chat - You Were Hit"
+	{
+		"#format" 		"{1:s}"
+		"en"			"{green}[Dodgeball Extreme]:{default} You were struck and killed by{lightgreen} {1}{default} dodgeball."
+	}
+
+	"Chat - You Hit An Enemy"
+	{
+		"#format" 		"{1:s}"
+		"en"			"{green}[Dodgeball Extreme]:{default} Your dodgeball struck and killed {lightgreen} {1}{default}."
+	}
+
+	"Chat - Your Ball Was Caught"
+	{
+		"#format" 		"{1:s}"
+		"en"			"{green}[Dodgeball Extreme]:{default} You died because{lightgreen} {1}{default} caught your dodgeball."
+	}
+
+	"Chat - You Caught A Ball"
+	{
+		"#format" 		"{1:s}"
+		"en"			"{green}[Dodgeball Extreme]:{default} You killed player{lightgreen} {1}{default} by catching their ball."
+	}
+
+	"Chat - Your Ball Was Caught Dead Player"
+	{
+		"#format" 		"{1:s}"
+		"en"			"{green}[Dodgeball Extreme]:{default} Player{lightgreen} {1}{default} caught your ball, but you were already dead."
+	}
+
+	"Chat - You Caught A Dead Players Ball"
+	{
+		"#format" 		"{1:s}"
+		"en"			"{green}[Dodgeball Extreme]:{default} You caught player{lightgreen} {1}'s{default} ball but they were already dead."
+	}
+
+	"Chat - Catch No Nearby Dodgeballs"
+	{
+		"en"			"{green}[Dodgeball Extreme]:{default} there were{lightgreen} active balls{default} within range for you to catch."
+	}
+}
