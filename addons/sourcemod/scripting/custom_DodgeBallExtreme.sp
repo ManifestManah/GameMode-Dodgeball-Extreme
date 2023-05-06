@@ -25,6 +25,7 @@ public Plugin myinfo =
 // - Convars - //
 /////////////////
 
+ConVar cvar_FeatureCatch;
 ConVar cvar_CooldownCatchTime;
 ConVar cvar_CooldownDashTime;
 ConVar cvar_GrenadeTrails;
@@ -73,8 +74,12 @@ public void OnPluginStart()
 	HookEvent("round_freeze_end", Event_RoundFreezeEnd, EventHookMode_Post);
 	HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Post);
 
-	// Adds a command istener for when a player inspects their weapon
-	AddCommandListener(CommandListener_Inspect, "+lookatweapon");
+	// If the value of cvar_FeatureCatch is set to true then execute this section
+	if(GetConVarBool(cvar_FeatureCatch))
+	{
+		// Adds a command istener for when a player inspects their weapon
+		AddCommandListener(CommandListener_Inspect, "+lookatweapon");
+	}
 
 	// Removes any unowned weapon and item entities from the map every 2.0 seconds
 	CreateTimer(2.0, Timer_CleanFloor, _, TIMER_REPEAT);
@@ -1138,6 +1143,7 @@ public void CreateModSpecificConvars()
 	// - Configuration Convars - //
 	///////////////////////////////
 
+	cvar_FeatureCatch =					CreateConVar("DBE_CatchFeature", 				"1",	 	"Should players be able to press [F] to catch nearby dodgeballs thrown by the enemy team? - [Default = 1]");
 	cvar_CooldownCatchTime = 			CreateConVar("DBE_CatchCooldownTime", 			"5.00",	 	"How many seconds should it take before a player can attempt to catch a ball again? - [Default = 5.00]");
 	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 	cvar_GrenadeTrails =				CreateConVar("DBE_GrenadeTrails", 				"1",	 	"Should thrown dodgeballs have a trail attached to them? - [Default = 1]");
@@ -1412,8 +1418,12 @@ public void ResetCooldowns()
 		// Resets the cooldown of the player's dash
 		playerCooldownDash[client] = 0.0;
 
-		// Resets the cooldown of the player's catch
-		playerCooldownCatch[client] = 0.0;
+		// If the value of cvar_FeatureCatch is set to true then execute this section
+		if(GetConVarBool(cvar_FeatureCatch))
+		{
+			// Resets the cooldown of the player's catch
+			playerCooldownCatch[client] = 0.0;
+		}
 	}
 }
 
@@ -1691,24 +1701,28 @@ public Action Timer_PlayerCooldownHud(Handle timer)
 			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[E] Dash:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
 		}
 
-		// If the player's catch is on cooldown then execute this section
-		if(playerCooldownCatch[client] > 0.0)
+		// If the value of cvar_FeatureCatch is set to true then execute this section
+		if(GetConVarBool(cvar_FeatureCatch))
 		{
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownCatch[client]);
+			// If the player's catch is on cooldown then execute this section
+			if(playerCooldownCatch[client] > 0.0)
+			{
+				// Modifies the contents stored within the hudMessage variable
+				Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> %0.2f seconds cooldown</font>", hudMessage, playerCooldownCatch[client]);
 
-			// Subtracts 0.1 from the current value of playerCooldownCatch[client]
-			playerCooldownCatch[client] -= 0.1;
-		}
+				// Subtracts 0.1 from the current value of playerCooldownCatch[client]
+				playerCooldownCatch[client] -= 0.1;
+			}
 
-		// If the player's catch is not on cooldown then execute this section
-		else
-		{
-			// Changes the player's catch to be off cooldown
-			playerCooldownCatch[client] = 0.0;
+			// If the player's catch is not on cooldown then execute this section
+			else
+			{
+				// Changes the player's catch to be off cooldown
+				playerCooldownCatch[client] = 0.0;
 
-			// Modifies the contents stored within the hudMessage variable
-			Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
+				// Modifies the contents stored within the hudMessage variable
+				Format(hudMessage, 1024, "%s\n<font color='#fbb227'>[F] Catch:</font><font color='#5fd6f9'> Ready</font>", hudMessage);
+			}
 		}
 
 		// Displays the contents of our hudMessage variable to the client in the hint text area of the screen 
