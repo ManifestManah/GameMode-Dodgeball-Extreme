@@ -34,8 +34,7 @@ ConVar cvar_CooldownDashTime;
 ConVar cvar_GrenadeTrails;
 ConVar cvar_GrenadeTrailsTeamColors;
 ConVar cvar_GrenadeTeamColors;
-
-
+ConVar cvar_FirstDodgeBall;
 
 
 //////////////////////////
@@ -1133,11 +1132,25 @@ public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroad
 			continue;
 		}
 
-		// Gives the client a decoy grenade after 0.1 seconds
-		CreateTimer(0.1, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+		// If the value of cvar_FirstDodgeBall is set to 0 or below then execute this section
+		if(GetConVarFloat(cvar_FirstDodgeBall) <= 0)
+		{
+			// Gives the client a decoy grenade after 0.1 seconds
+			CreateTimer(0.1, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
 
-		// Plays the whistle blowing sound after 0.1 seconds
-		CreateTimer(0.1, Timer_BlowWhistle, client, TIMER_FLAG_NO_MAPCHANGE);
+			// Plays the whistle blowing sound after 0.1 seconds
+			CreateTimer(0.1, Timer_BlowWhistle, client, TIMER_FLAG_NO_MAPCHANGE);
+		}
+
+		// If the value of cvar_FirstDodgeBall is set to anything above 0 then execute this section
+		else
+		{
+			// Gives the client a decoy grenade after 0.1 seconds
+			CreateTimer(GetConVarFloat(cvar_FirstDodgeBall), Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+
+			// Plays the whistle blowing sound after 0.1 seconds
+			CreateTimer(GetConVarFloat(cvar_FirstDodgeBall), Timer_BlowWhistle, client, TIMER_FLAG_NO_MAPCHANGE);
+		}
 	}
 
 	// Enables the usage of dash and catch
@@ -1167,6 +1180,7 @@ public void CreateModSpecificConvars()
 	cvar_GrenadeTrails =				CreateConVar("DBE_GrenadeTrails", 				"1",	 	"Should thrown dodgeballs have a trail attached to them? - [Default = 1]");
 	cvar_GrenadeTrailsTeamColors =		CreateConVar("DBE_GrenadeTrailsTeamColors", 	"1",	 	"Should the trails be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
 	cvar_GrenadeTeamColors =			CreateConVar("DBE_GrenadeTeamColors", 			"1",	 	"Should the dodgeballs be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
+	cvar_FirstDodgeBall =				CreateConVar("DBE_FirstDodgeBall", 				"1.0",	 	"How many seconds after the freeze time expires should the players receive their first dodgeball? - [Default = 1.0]");
 
 	// Automatically generates a config file that contains our variables
 	AutoExecConfig(true, "dodgeball_convars", "sourcemod/dodgeball_extreme");
