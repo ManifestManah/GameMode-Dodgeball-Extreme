@@ -221,6 +221,12 @@ public Action Hook_OnTakeDamage(int client, int &attacker, int &inflictor, float
 		return Plugin_Continue;
 	}
 
+	// If the client's struck status is true then execute this section
+	if(isPlayerAlreadyStruck[client])
+	{
+		return Plugin_Continue;
+	}
+
 	// If the attacker does not meet our validation criteria then execute this section
 	if(!IsValidClient(attacker))
 	{
@@ -1058,6 +1064,9 @@ public void Hook_DecoyStartTouch(int entity, int other)
 
 	// Sends a multi-language message to the client
 	CPrintToChat(attacker, "%t", "Chat - You Hit An Enemy", nameOfClient);
+
+	// Sets the client's struck status true
+	isPlayerAlreadyStruck[other] = true;
 }
 
 
@@ -1162,12 +1171,6 @@ public void Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroad
 			continue;
 		}
 
-		// If the client is a bot then execute this section
-		if(IsFakeClient(client))
-		{
-			continue;
-		}
-
 		// If the value of cvar_FirstDodgeBall is set to 0 or below then execute this section
 		if(GetConVarFloat(cvar_FirstDodgeBall) <= 0)
 		{
@@ -1250,6 +1253,12 @@ public void LateLoadSupport()
 // This happens every frame / tick if a player is within range of an enemy's active dodgeball 
 public void inflictdamage(int client, int entity, int attacker)
 {
+	// If the client's struck status is true then execute this section
+	if(isPlayerAlreadyStruck[client])
+	{
+		return;
+	}
+
 	// Sets the decoy entity's bounce status to true
 	decoyHasBounced[entity] = true;
 
@@ -1283,6 +1292,9 @@ public void inflictdamage(int client, int entity, int attacker)
 
 	// Applies 500 club damage to the client from the attacker with a decoy grenade entity
 	SDKHooks_TakeDamage(client, entity, attacker, 500.0, (1 << 7), entity, NULL_VECTOR, NULL_VECTOR);
+
+	// Sets the client's struck status true
+	isPlayerAlreadyStruck[client] = true;
 }
 
 
@@ -1902,6 +1914,12 @@ public Action Timer_BlowWhistle(Handle Timer, int client)
 {
 	// If the player does not meet our validation criteria then execut this section
 	if(!IsValidClient(client))
+	{
+		return Plugin_Continue;
+	}
+
+	// If the client is a bot then execute this section
+	if(IsFakeClient(client))
 	{
 		return Plugin_Continue;
 	}
