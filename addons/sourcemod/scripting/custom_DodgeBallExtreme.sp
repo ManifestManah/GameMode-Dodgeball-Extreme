@@ -35,6 +35,7 @@ ConVar cvar_GrenadeTrails;
 ConVar cvar_GrenadeTrailsTeamColors;
 ConVar cvar_GrenadeTeamColors;
 ConVar cvar_FirstDodgeBall;
+ConVar cvar_DodgeballRecoveryTime;
 
 
 //////////////////////////
@@ -1091,12 +1092,23 @@ public void Event_WeaponFire(Handle event, const char[] name, bool dontBroadcast
 		return;
 	}
 
-	/* NOTE: Using any lower time gap will cause the player to be unable to
-			 fully receive the decoy grenade, and render them unable to see
-			 the view model, as well as throw the grenade. */
+	// If the value of cvar_DodgeballRecoveryTime is set to 0.8 or below then execute this section
+	if(GetConVarFloat(cvar_DodgeballRecoveryTime) <= 0.8)
+	{
+		/* NOTE: Using any lower time gap will cause the player to be unable to
+				 fully receive the decoy grenade, and render them unable to see
+				 the view model, as well as throw the grenade. */
 
-	// Gives the client a decoy grenade after 0.8 seconds
-	CreateTimer(0.8, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+		// Gives the client a decoy grenade after 0.8 seconds
+		CreateTimer(0.8, Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+	}
+
+	// If the value of cvar_DodgeballRecoveryTime is set to anything above 0.8 then execute this section
+	else
+	{
+		// Gives the client a decoy grenade after (default: 0.8) seconds
+		CreateTimer(GetConVarFloat(cvar_DodgeballRecoveryTime), Timer_GiveDecoyGrenade, client, TIMER_FLAG_NO_MAPCHANGE);
+	}
 }
 
 
@@ -1181,6 +1193,7 @@ public void CreateModSpecificConvars()
 	cvar_GrenadeTrailsTeamColors =		CreateConVar("DBE_GrenadeTrailsTeamColors", 	"1",	 	"Should the trails be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
 	cvar_GrenadeTeamColors =			CreateConVar("DBE_GrenadeTeamColors", 			"1",	 	"Should the dodgeballs be colored blue if the ball belongs to the counter-terrorists team, and red if the ball belongs to the terrorist team? - [Default = 1]");
 	cvar_FirstDodgeBall =				CreateConVar("DBE_FirstDodgeBall", 				"1.0",	 	"How many seconds after the freeze time expires should the players receive their first dodgeball? - [Default = 1.0]");
+	cvar_DodgeballRecoveryTime =		CreateConVar("DBE_DodgeballRecoveryTime", 		"0.8",	 	"How long time, in seconds, should it take before a player receives a new ball after having thrown their previous one? - [Default = 0.8]");
 
 	// Automatically generates a config file that contains our variables
 	AutoExecConfig(true, "dodgeball_convars", "sourcemod/dodgeball_extreme");
