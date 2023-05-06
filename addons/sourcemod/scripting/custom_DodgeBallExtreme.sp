@@ -29,6 +29,7 @@ ConVar cvar_FeatureCatch;
 ConVar cvar_CooldownCatchTime;
 ConVar cvar_FeatureDash;
 ConVar cvar_DashEffects;
+ConVar cvar_DashDuration;
 ConVar cvar_CooldownDashTime;
 ConVar cvar_GrenadeTrails;
 ConVar cvar_GrenadeTrailsTeamColors;
@@ -522,7 +523,7 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 			}
 
 			// Changes the client's movement speed back to normal after a short time
-			CreateTimer(0.25, Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(GetConVarFloat(cvar_DashDuration), Timer_ResetPlayerSpeed, client, TIMER_FLAG_NO_MAPCHANGE);
 		}
 	}
 
@@ -1159,6 +1160,7 @@ public void CreateModSpecificConvars()
 
 	cvar_FeatureDash =					CreateConVar("DBE_DashFeature", 				"1",	 	"Should players be able to press [E] to dash and gain a brief movement speed boost? - [Default = 1]");
 	cvar_DashEffects =					CreateConVar("DBE_DashEffects", 				"1",	 	"Should a visual effect be added to players when they use their dash? - [Default = 1]");
+	cvar_DashDuration =					CreateConVar("DBE_DashDuration", 				"0.25",	 	"How many seconds should the player's speed be increased after they press their dash button? - [Default = 0.25]");
 	cvar_CooldownDashTime = 			CreateConVar("DBE_DashCooldownTime", 			"8.00",	 	"How many seconds should it take before a player can use their dash again? - [Default = 8.00]");
 	cvar_FeatureCatch =					CreateConVar("DBE_CatchFeature", 				"1",	 	"Should players be able to press [F] to catch nearby dodgeballs thrown by the enemy team? - [Default = 1]");
 	cvar_CooldownCatchTime = 			CreateConVar("DBE_CatchCooldownTime", 			"5.00",	 	"How many seconds should it take before a player can attempt to catch a ball again? - [Default = 5.00]");
@@ -1524,8 +1526,8 @@ public void AttachVisualParticleEffects(int client, float height)
 	// Sets the client to be the parent of the entity
 	AcceptEntityInput(entity, "SetParent", client, entity, 0);
 
-	// Removes the particle effect from the game after 0.5 seconds
-	CreateTimer(0.5, Timer_RemoveParticleEffect, entity, TIMER_FLAG_NO_MAPCHANGE);
+	// Removes the particle effect from the game after (Default: 0.5) seconds
+	CreateTimer(GetConVarFloat(cvar_DashDuration) + 0.25, Timer_RemoveParticleEffect, entity, TIMER_FLAG_NO_MAPCHANGE);
 }
 
 
