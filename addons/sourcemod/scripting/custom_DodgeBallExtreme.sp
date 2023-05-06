@@ -70,6 +70,9 @@ char hudMessage[1024];
 // This happens when the plugin is loaded
 public void OnPluginStart()
 {
+	// Loads the translaltion file which we intend to use
+	LoadTranslations("manifest_DodgeBallExtreme.phrases");
+
 	// Creates the names and assigns values to the ConVars the modification will be using 
 	CreateModSpecificConvars();
 
@@ -104,6 +107,17 @@ public void OnPluginStart()
 
 	// Fixes an issue with the hint area not displaying html colors
 	AllowHtmlHintMessages();
+
+	// Sends the specified multi-language message to all clients
+	SendChatMessageToAll("Chat - Mod Loaded");
+}
+
+
+// This happens when the plugin is unloaded
+public void OnPluginEnd()
+{
+	// Sends the specified multi-language message to all clients
+	SendChatMessageToAll("Chat - Mod Unloaded");
 }
 
 
@@ -258,11 +272,11 @@ public Action Hook_OnTakeDamage(int client, int &attacker, int &inflictor, float
 	// Obtains the name of the attacker and store it within the nameOfAttacker variable
 	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
 
-	// Sends a message to the client in the chat area
-	PrintToChat(client, "You were struck and killed by %s's dodgeball.", nameOfAttacker);
+	// Sends a multi-language message to the client
+	CPrintToChat(client, "%t", "Chat - You Were Hit", nameOfAttacker);
 
-	// Sends a message to the attacker in the chat area
-	PrintToChat(attacker, "Your dodgeball struck and killed %s.", nameOfClient);
+	// Sends a multi-language message to the client
+	CPrintToChat(attacker, "%t", "Chat - You Hit An Enemy", nameOfClient);
 
 	// If the sound is not already precached then execute this section
 	if(!IsSoundPrecached("manifest/dodgeball_extreme/sfx_dodgeball_impact.wav"))
@@ -724,8 +738,8 @@ public Action CommandListener_Inspect(int client, const char[] command, int argc
 		}
 	}
 
-	// Sends a message to the client in the chat area
-	PrintToChat(client, "There were no active ball within your range for you to catch.");
+	// Sends a multi-language message to the client
+	CPrintToChat(client, "%t", "Chat - Catch No Nearby Dodgeballs");
 
 	// Changes the player's catch to be on cooldown
 	playerCooldownCatch[client] = GetConVarFloat(cvar_CooldownCatchTime);
@@ -1039,11 +1053,11 @@ public void Hook_DecoyStartTouch(int entity, int other)
 	// Obtains the name of the attacker and store it within the nameOfAttacker variable
 	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
 
-	// Sends a message to the client in the chat area
-	PrintToChat(other, "You were struck and killed by %s's dodgeball.", nameOfAttacker);
+	// Sends a multi-language message to the client
+	CPrintToChat(other, "%t", "Chat - You Were Hit", nameOfAttacker);
 
-	// Sends a message to the attacker in the chat area
-	PrintToChat(attacker, "Your dodgeball struck and killed %s.", nameOfClient);
+	// Sends a multi-language message to the client
+	CPrintToChat(attacker, "%t", "Chat - You Hit An Enemy", nameOfClient);
 }
 
 
@@ -1258,11 +1272,11 @@ public void inflictdamage(int client, int entity, int attacker)
 	// Obtains the name of the attacker and store it within the nameOfAttacker variable
 	GetClientName(attacker, nameOfAttacker, sizeof(nameOfAttacker));
 
-	// Sends a message to the client in the chat area
-	PrintToChat(client, "You were struck and killed by %s's dodgeball.", nameOfAttacker);
+	// Sends a multi-language message to the client
+	CPrintToChat(client, "%t", "Chat - You Were Hit", nameOfAttacker);
 
-	// Sends a message to the attacker in the chat area
-	PrintToChat(attacker, "Your dodgeball struck and killed %s.", nameOfClient);
+	// Sends a multi-language message to the client
+	CPrintToChat(attacker, "%t", "Chat - You Hit An Enemy", nameOfClient);
 
 	// Emits a sound to the specified client that only they can hear
 	EmitSoundToClient(client, "manifest/dodgeball_extreme/sfx_dodgeball_impact.wav", SOUND_FROM_PLAYER, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, 1.00, SNDPITCH_NORMAL, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
@@ -1621,11 +1635,11 @@ public void inflictDamageCatch(int client, int entity, int attacker)
 	// If the client is not alive then execute this section
 	else
 	{
-		// Sends a message to the client in the chat area
-		PrintToChat(attacker, "%s caught your ball, but you were already dead.", nameOfClient);
+		// Sends a multi-language message to the client
+		CPrintToChat(attacker, "%t", "Chat - Your Ball Was Caught Dead Player", nameOfClient);
 
-		// Sends a message to the client in the chat area
-		PrintToChat(client, "You Caught player %s's ball but they were already dead.", nameOfAttacker);
+		// Sends a multi-language message to the client
+		CPrintToChat(client, "%t", "Chat - You Caught A Dead Players Ball", nameOfAttacker);
 	}
 
 	// If the sound is not already precached then execute this section
