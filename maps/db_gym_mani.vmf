@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8862"
-	"mapversion" "8"
+	"mapversion" "11"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -73,7 +73,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "8"
+	"mapversion" "11"
 	"classname" "worldspawn"
 	"comment" "Decompiled by BSPSource v1.3.23 from db_main_alpha"
 	"detailmaterial" "detail/detailsprites"
@@ -2572,7 +2572,7 @@ world
 				"v" "-96 414 106"
 				"v" "-64 414 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 1 32] 0.25"
 			"vaxis" "[1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -2644,7 +2644,7 @@ world
 				"v" "-96 446 104"
 				"v" "-96 446 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 1 32] 0.25"
 			"vaxis" "[0 1 0 -462] 0.2"
 			"rotation" "0"
@@ -2844,7 +2844,7 @@ world
 				"v" "-64 414 104"
 				"v" "-64 414 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 1 32] 0.25"
 			"vaxis" "[1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -3080,7 +3080,7 @@ world
 				"v" "60 414 104"
 				"v" "60 414 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 1 32] 0.25"
 			"vaxis" "[1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -3298,7 +3298,7 @@ world
 				"v" "96 414 104"
 				"v" "96 414 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 1 32] 0.25"
 			"vaxis" "[0 1 0 -462] 0.2"
 			"rotation" "0"
@@ -3316,7 +3316,7 @@ world
 				"v" "64 414 104"
 				"v" "64 414 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 1 32] 0.25"
 			"vaxis" "[1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -6958,7 +6958,7 @@ world
 				"v" "-292 -454 212"
 				"v" "-292 -454 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -6976,7 +6976,7 @@ world
 				"v" "-248 -478 212"
 				"v" "-248 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -7248,7 +7248,7 @@ world
 				"v" "-472 -454 412"
 				"v" "-472 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -7266,7 +7266,7 @@ world
 				"v" "-428 -478 212"
 				"v" "-428 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -7448,7 +7448,7 @@ world
 				"v" "-608 -478 212"
 				"v" "-608 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -7666,7 +7666,7 @@ world
 				"v" "-112 -454 212"
 				"v" "-112 -454 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -7920,7 +7920,7 @@ world
 				"v" "112 -478 212"
 				"v" "112 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -8192,7 +8192,7 @@ world
 				"v" "248 -454 412"
 				"v" "248 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -8210,7 +8210,7 @@ world
 				"v" "292 -478 212"
 				"v" "292 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -8374,7 +8374,7 @@ world
 				"v" "428 -454 212"
 				"v" "428 -454 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -8392,7 +8392,7 @@ world
 				"v" "472 -478 212"
 				"v" "472 -478 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -8610,7 +8610,7 @@ world
 				"v" "608 -454 212"
 				"v" "608 -454 412"
 			}
-			"material" "MAPS/DB_ALPHA/AGENCY/WALL/BRICK_WHITE_0_0_96"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -9862,7 +9862,7 @@ world
 				"v" "640 -478 448"
 				"v" "640 384 448"
 			}
-			"material" "MAPS/DB_ALPHA/DE_STADIUM/TILE_LARGE_01_WHI_0_0_96"
+			"material" "DE_STADIUM/TILE_LARGE_01_WHI"
 			"uaxis" "[0 1 0 256] 0.352"
 			"vaxis" "[1 0 0 256] 0.352"
 			"rotation" "0"
@@ -26747,7 +26747,7 @@ entity
 				"v" "-382 446 6"
 				"v" "-258 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -27213,7 +27213,7 @@ entity
 				"v" "-126 446 4.5623"
 				"v" "-128 446 4"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -32371,7 +32371,7 @@ entity
 				"v" "-386 446 4.55376"
 				"v" "-386 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -34011,7 +34011,7 @@ entity
 				"v" "130 446 6"
 				"v" "254 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -35307,7 +35307,7 @@ entity
 				"v" "-639 392 4"
 				"v" "-639 392 360"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 -1 0 32] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -35461,7 +35461,7 @@ entity
 				"v" "510 446 4.55469"
 				"v" "510 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -36273,7 +36273,7 @@ entity
 				"v" "-254 446 6"
 				"v" "-130 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -37253,7 +37253,7 @@ entity
 				"v" "-514 446 4.56209"
 				"v" "-514 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -38551,7 +38551,7 @@ entity
 				"v" "-640 446 360"
 				"v" "-640 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -40499,7 +40499,7 @@ entity
 				"v" "-256 446 4"
 				"v" "-256 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -40971,7 +40971,7 @@ entity
 				"v" "-384 446 360"
 				"v" "-384 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -44773,7 +44773,7 @@ entity
 				"v" "514 446 6"
 				"v" "638 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -46385,7 +46385,7 @@ entity
 				"v" "256 446 360"
 				"v" "256 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -51603,7 +51603,7 @@ entity
 				"v" "258 446 6"
 				"v" "382 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -51811,7 +51811,7 @@ entity
 				"v" "-510 446 6"
 				"v" "-386 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -52387,7 +52387,7 @@ entity
 				"v" "-0 446 360"
 				"v" "-0 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -53389,7 +53389,7 @@ entity
 				"v" "-128 446 368"
 				"v" "-128 446 360"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -53629,7 +53629,7 @@ entity
 				"v" "-639 392 360"
 				"v" "-639 392 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[0 1 0 -48] 0.25"
 			"rotation" "0"
@@ -56993,7 +56993,7 @@ entity
 				"v" "256 446 4"
 				"v" "256 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -57075,7 +57075,7 @@ entity
 				"v" "386 446 6"
 				"v" "510 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -57365,7 +57365,7 @@ entity
 				"v" "-130 446 4.5625"
 				"v" "-130 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -58713,7 +58713,7 @@ entity
 				"v" "384 446 368"
 				"v" "512 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -63299,7 +63299,7 @@ entity
 				"v" "126 446 4.56641"
 				"v" "126 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -63793,7 +63793,7 @@ entity
 				"v" "-258 446 4.56128"
 				"v" "-258 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -64131,7 +64131,7 @@ entity
 				"v" "639 446 4"
 				"v" "639 446 360"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 1 0 -32] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -64919,7 +64919,7 @@ entity
 				"v" "2 446 6"
 				"v" "126 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -65055,7 +65055,7 @@ entity
 				"v" "639 392 4"
 				"v" "639 446 4"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[0 1 0 -48] 0.25"
 			"rotation" "0"
@@ -65325,7 +65325,7 @@ entity
 				"v" "-510 446 4.56"
 				"v" "-512 446 4"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -66641,7 +66641,7 @@ entity
 				"v" "514 446 4.56219"
 				"v" "512 446 4"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -67039,7 +67039,7 @@ entity
 				"v" "384 446 4"
 				"v" "384 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -68829,7 +68829,7 @@ entity
 				"v" "128 446 4"
 				"v" "128 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -72869,7 +72869,7 @@ entity
 				"v" "382 446 4.5624"
 				"v" "382 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -73479,7 +73479,7 @@ entity
 				"v" "-384 446 4"
 				"v" "-384 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -75451,7 +75451,7 @@ entity
 				"v" "639 394 6"
 				"v" "639 394 360"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 -1 0 32] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -75487,7 +75487,7 @@ entity
 				"v" "639 392 4"
 				"v" "639 392 360"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 32] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -77235,7 +77235,7 @@ entity
 				"v" "512 446 368"
 				"v" "640 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -79959,7 +79959,7 @@ entity
 				"v" "-126 446 6"
 				"v" "-2 446 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -81333,7 +81333,7 @@ entity
 				"v" "-514 446 6"
 				"v" "-512 446 4"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -82125,7 +82125,7 @@ entity
 				"v" "-639 394 104"
 				"v" "-639 394 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 32] 0.25"
 			"vaxis" "[0 1 0 -48] 0.25"
 			"rotation" "0"
@@ -83049,7 +83049,7 @@ entity
 				"v" "-128 446 360"
 				"v" "-128 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -84741,7 +84741,7 @@ entity
 				"v" "639 446 368"
 				"v" "639 392 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[0 1 0 -48] 0.25"
 			"rotation" "0"
@@ -85217,7 +85217,7 @@ entity
 				"v" "-639 444 6"
 				"v" "-639 444 360"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 1 0 -32] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -85609,7 +85609,7 @@ entity
 				"v" "-512 446 360"
 				"v" "-512 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -87089,7 +87089,7 @@ entity
 				"v" "639 444 104"
 				"v" "639 444 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 32] 0.25"
 			"vaxis" "[0 1 0 -48] 0.25"
 			"rotation" "0"
@@ -87755,7 +87755,7 @@ entity
 				"v" "-638 446 104"
 				"v" "-638 446 106"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 32] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -91413,7 +91413,7 @@ entity
 				"v" "254 446 104"
 				"v" "256 446 104"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -91477,7 +91477,7 @@ entity
 				"v" "128 446 360"
 				"v" "128 446 368"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 64] 0.25"
 			"vaxis" "[-1 0 0 -16] 0.25"
 			"rotation" "0"
@@ -92165,7 +92165,7 @@ entity
 				"v" "638 446 6"
 				"v" "638 446 360"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -96937,7 +96937,7 @@ entity
 				"v" "-639 394 6"
 				"v" "-639 444 6"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[0 0 -1 16] 0.25"
 			"vaxis" "[0 1 0 -48] 0.25"
 			"rotation" "0"
@@ -99161,7 +99161,7 @@ entity
 				"v" "-638 446 6"
 				"v" "-640 446 4"
 			}
-			"material" "MAPS/DB_ALPHA/METAL/DRTRIMB_0_0_96"
+			"material" "AGENCY/PLASTER/PLASTERWALL03A"
 			"uaxis" "[-1 0 0 0] 0.25"
 			"vaxis" "[0 0 1 480] 0.25"
 			"rotation" "0"
@@ -112634,8 +112634,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-367.755 -46.9888 255.133]"
-		"look" "[-103.249 -15.4503 253.273]"
+		"position" "[616.873 -380.929 241.929]"
+		"look" "[399.286 -516.89 313.566]"
 	}
 	camera
 	{
