@@ -1022,6 +1022,12 @@ public void Hook_DecoyStartTouch(int entity, int other)
 		return;
 	}
 
+	// If the client and attacker is on the same team
+	if(GetClientTeam(other) == GetClientTeam(attacker))
+	{
+		return;
+	}
+
 	// Creates a variable which we will use to store data within
 	float entityVelocity[3];
 
